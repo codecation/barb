@@ -1,7 +1,7 @@
-
 module Main exposing (..)
 
 -- Elm Core
+
 import Html exposing (..)
 import Html.App
 import Html.Attributes exposing (..)
@@ -12,30 +12,30 @@ import Html.Events exposing (..)
 
 
 type alias Model =
-  {
-  }
+    {}
 
 
-init : (Model, Cmd Msg)
+init : ( Model, Cmd Msg )
 init =
-  ( {
-    }
-  , Cmd.none
-  )
+    ( {}
+    , Cmd.none
+    )
+
 
 
 -- UPDATE
 
 
 type Msg
-  = NoOp
+    = NoOp
 
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-  case msg of
-    NoOp ->
-      (model, Cmd.none)
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
 
 
 -- VIEW
@@ -43,9 +43,11 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-  div
-  []
-  [text "Hello world"]
+    div [ class "images" ]
+        [ div [ class "images-original_image_container" ]
+            [ img [ src "http://yumurtaliekmek.com/wp-content/uploads/2014/11/manet-teknede-0711.jpg" ] [] ]
+        ]
+
 
 
 -- SUBSCRIPTIONS
@@ -53,14 +55,14 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
+    Sub.none
 
 
 main : Program Never
 main =
-  Html.App.program
-    { init = init
-    , update = update
-    , view = view
-    , subscriptions = subscriptions
-    }
+    Html.App.program
+        { init = init
+        , update = update
+        , view = view
+        , subscriptions = subscriptions
+        }
