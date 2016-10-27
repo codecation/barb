@@ -1,10 +1,5 @@
 module Main exposing (..)
 
-<<<<<<< HEAD
--- Elm Core
-
-=======
->>>>>>> Lay out the algorithm
 import Html exposing (..)
 import Html.App
 import Html.Attributes exposing (..)
