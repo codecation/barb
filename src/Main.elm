@@ -7,23 +7,20 @@ import Html.Events exposing (..)
 
 
 -- Algorithm
-
 -- Start: generate a random DNA sequence.
-
 -- 1. Copy the current DNA sequence and mutate it slightly
 -- 2. Use the new DNA to render polygons onto a canvas
 -- 3. Compare the canvas to the source image
 -- 4. If the new image looks more like the source image than the previous
 --    image did, then overwrite the current DNA with the new DNA
 -- 5. Repeat
-
 -- MODEL
 
 
 type alias Model =
-  { fittestDNA : String
-  , candidateDNA : String
-  }
+    { fittestDNA : String
+    , candidateDNA : String
+    }
 
 
 init : ( Model, Cmd Msg )
@@ -38,8 +35,8 @@ init =
 
 
 type Msg
-  = NoOp
-  | Start
+    = NoOp
+    | Start
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -47,6 +44,7 @@ update msg model =
     case msg of
         NoOp ->
             ( model, Cmd.none )
+
         Start ->
             ( model, Cmd.none )
 
@@ -67,6 +65,7 @@ view model =
                 [ button [ Html.Events.onClick Start ] [ text "Start" ] ]
             ]
         ]
+
 
 
 -- SUBSCRIPTIONS
