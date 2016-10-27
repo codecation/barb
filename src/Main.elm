@@ -53,16 +53,24 @@ update msg model =
 -- VIEW
 
 
+uploadedImageSize : Attribute msg
+uploadedImageSize =
+    style
+        [ ( "width", "300px" )
+        , ( "height", "300px" )
+        ]
+
+
 view : Model -> Html Msg
 view model =
     div [ class "images" ]
         [ div [ class "images-image_container" ]
             [ img [ src "http://yumurtaliekmek.com/wp-content/uploads/2014/11/manet-teknede-0711.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container" ]
-            []
-        , div [ class "controls" ]
-            [ div [ class "controls-start" ]
-                [ button [ Html.Events.onClick Start ] [ text "Start" ] ]
+            [ div [ uploadedImageSize, class "images-image_container-generated_image_canvas" ]
+                []
+            , div [ class "controls" ]
+                [ button [ Html.Events.onClick Start, class "controls-start" ] [ text "Start" ] ]
             ]
         ]
 
