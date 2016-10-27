@@ -64,7 +64,7 @@ view model =
             []
         , div [ class "controls" ]
             [ div [ class "controls-start" ]
-                [ button [] [ text "Start" ] ]
+                [ button [ Html.Events.onClick Start ] [ text "Start" ] ]
             ]
         ]
 
