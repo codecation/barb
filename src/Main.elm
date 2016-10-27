@@ -44,10 +44,15 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div [ class "images" ]
-        [ div [ class "images-original_image_container" ]
-            [ img [ src "http://yumurtaliekmek.com/wp-content/uploads/2014/11/manet-teknede-0711.jpg" ] [] ]
+        [ div [ class "images-image_container" ]
+            [ img [ src "http://yumurtaliekmek.com/wp-content/uploads/2014/11/manet-teknede-0711.jpg", class "images-original_image_container-image" ] [] ]
+        , div [ class "images-image_container" ]
+            []
+        , div [ class "controls" ]
+            [ div [ class "controls-start" ]
+                [ button [] [ text "Start" ] ]
+            ]
         ]
-
 
 
 -- SUBSCRIPTIONS

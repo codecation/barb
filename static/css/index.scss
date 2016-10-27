@@ -1,5 +1,17 @@
-
-/* Note: You can write Sass in this file. */
-
 body {
+  margin: 0;
+}
+
+.images {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  width: 100vw;
+  align-items: center;
+  justify-content: center;
+}
+
+.images-image_container {
+  box-shadow: 0 20px 40px rgba(0, 0 ,0, .3);
+  margin: 0 4vw;
 }
