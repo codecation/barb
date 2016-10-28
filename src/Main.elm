@@ -90,7 +90,7 @@ styleUploadedImageSize =
 
 loaderRect : Html.Html msg
 loaderRect =
-    svg [ Svg.Attributes.width imageWidth, Svg.Attributes.height imageHeight, class "images-image_container-loader" ]
+    svg [ Svg.Attributes.width imageWidth, Svg.Attributes.height imageHeight, Svg.Attributes.class "images-image_container-loader" ]
         [ Svg.rect [ Svg.Attributes.x "0", Svg.Attributes.y "0", Svg.Attributes.width "100%", Svg.Attributes.height "100%" ] [] ]
 
 
