@@ -92,12 +92,6 @@ styleUploadedImageSize =
         ]
 
 
-loaderRect : Html.Html msg
-loaderRect =
-    svg [ Svg.Attributes.width imageWidth, Svg.Attributes.height imageHeight, Svg.Attributes.class "images-image_container-loader" ]
-        [ Svg.rect [ Svg.Attributes.x "0", Svg.Attributes.y "0", Svg.Attributes.width "100%", Svg.Attributes.height "100%" ] [] ]
-
-
 view : Model -> Html Msg
 view model =
     div [ class "images" ]
@@ -106,7 +100,6 @@ view model =
         , div [ class "images-image_container" ]
             [ div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
                 [ drawCandidate model.candidate ]
-            , loaderRect
             , div [ class "controls" ]
                 [ button [ Html.Events.onClick Start, class "controls-start" ] [ text "Start" ] ]
             ]

@@ -14,26 +14,16 @@ body {
 }
 
 .images-image_container {
-  align-items: center;
   background: #fff;
   box-shadow: 0 20px 40px rgba(0, 0 ,0, .2);
-  display: flex;
-  justify-content: center;
   margin: 0 4vw;
-}
-
-.images-image_container-loader {
-  position: absolute;
-
-  rect {
-    fill: transparent;
-    stroke: #000;
-    stroke-width: 5px;
-  }
+  position: relative;
 }
 
 .images-image_container .controls {
+  left: 50%;
   position: absolute;
+  transform: translateX(-50%);
 }
 
 .controls-start {
