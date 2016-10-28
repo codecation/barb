@@ -1,5 +1,8 @@
 module Main exposing (..)
 
+import Collage
+import Color
+import Element
 import Html exposing (..)
 import Html.App
 import Html.Attributes exposing (..)
@@ -109,9 +112,9 @@ view model =
         ]
 
 
-drawCandidate : (List Circle) -> String
+drawCandidate : (List Circle) -> Html Msg
 drawCandidate circles =
-    "hey"
+    Collage.collage 300 300 [ Collage.circle 10.0 |> Collage.filled (Color.rgb 128 128 128) ] |> Element.toHtml
 
 
 -- SUBSCRIPTIONS
