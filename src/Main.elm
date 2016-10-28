@@ -197,7 +197,7 @@ view model =
         , div [ class "debug_area" ]
             [ button [ Html.Events.onClick RequestImageData ] [ text "RequestImageData" ]
             , button [ Html.Events.onClick GenerateNewCandidate ] [ text "GenerateNewCandidate" ]
-            , div [] [ text <| toString model.fittestFitness ]
+            , div [] [ text <| "fittest fitness: " ++ toString model.fittestFitness ]
             , div [] [ text <| "iterations: " ++ toString model.iterations ]
             ]
         ]
