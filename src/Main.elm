@@ -24,15 +24,25 @@ import Svg.Attributes
 -- MODEL
 
 
-numberOfCircles = 200
-minimumRadiusLength = 1.0
-maximumRadiusLength = 80.0
-maximumAlpha = 0.9
+numberOfCircles =
+    200
+
+
+minimumRadiusLength =
+    1.0
+
+
+maximumRadiusLength =
+    80.0
+
+
+maximumAlpha =
+    0.85
 
 
 type alias Model =
-    { fittest : List Circle
-    , candidate : List Circle
+    { fittest : Image
+    , candidate : Image
     }
 
 
@@ -42,6 +52,10 @@ type alias Circle =
     , color : Color.Color
     , alpha : Float
     }
+
+
+type alias Image =
+    List Circle
 
 
 init : ( Model, Cmd Msg )
@@ -65,13 +79,15 @@ randomColor : Random.Generator Color.Color
 randomColor =
     Random.map3 Color.rgb (Random.int 0 255) (Random.int 0 255) (Random.int 0 255)
 
+
+
 -- UPDATE
 
 
 type Msg
     = NoOp
     | Start
-    | InitialDNA (List Circle)
+    | InitialDNA Image
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -123,7 +139,7 @@ view model =
         ]
 
 
-drawCandidate : List Circle -> Html Msg
+drawCandidate : Image -> Html Msg
 drawCandidate circles =
     Collage.collage 300
         300
@@ -133,10 +149,11 @@ drawCandidate circles =
 
 drawCircle : Circle -> Collage.Form
 drawCircle circle =
-    Collage.circle circle.radius 
-        |> Collage.filled circle.color 
-        |> Collage.move circle.center 
+    Collage.circle circle.radius
+        |> Collage.filled circle.color
+        |> Collage.move circle.center
         |> Collage.alpha circle.alpha
+
 
 
 -- SUBSCRIPTIONS
