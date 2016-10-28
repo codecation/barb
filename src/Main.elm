@@ -101,7 +101,7 @@ view model =
             [ img [ src "http://yumurtaliekmek.com/wp-content/uploads/2014/11/manet-teknede-0711.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container" ]
             [ div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
-                []
+                [text (toString model)]
             , loaderRect
             , div [ class "controls" ]
                 [ button [ Html.Events.onClick Start, class "controls-start" ] [ text "Start" ] ]
