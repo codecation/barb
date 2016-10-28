@@ -173,8 +173,10 @@ view model =
             [ div [ styleUploadedImageSize, Html.Events.onClick Start, class "images-image_container-generated_image_canvas" ]
                 [ drawCandidate model.fittest ]
             ]
-        , button [ Html.Events.onClick RequestImageData ] [ text "Send" ]
-        , div [] [ text <| toString model.fittestFitness ]
+        , div [ class "debug_area" ]
+            [ button [ Html.Events.onClick RequestImageData ] [ text "Send" ]
+            , div [] [ text <| toString model.fittestFitness ]
+            ]
         ]
 
 
