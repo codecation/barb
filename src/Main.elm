@@ -31,6 +31,7 @@ type alias Model =
 
 type alias Circle =
     { center : ( Int, Int )
+    , radius : Float
     }
 
 
@@ -43,7 +44,7 @@ init =
 
 randomCircle : Random.Generator Circle
 randomCircle =
-    Random.map Circle (Random.pair (Random.int -200 200) (Random.int -200 200))
+    Random.map2 Circle (Random.pair (Random.int -200 200) (Random.int -200 200)) (Random.float 1.0 5.0)
 
 
 
@@ -116,10 +117,13 @@ drawCandidate : List Circle -> Html Msg
 drawCandidate circles =
     Collage.collage 300
         300
-        [ Collage.circle 10.0 |> Collage.filled (Color.rgb 128 128 128)
-        ]
+        (List.map drawCircle circles)
         |> Element.toHtml
 
+
+drawCircle : Circle -> Collage.Form
+drawCircle circle =
+    Collage.circle circle.radius |> Collage.filled (Color.rgb 128 128 128)
 
 
 -- SUBSCRIPTIONS
