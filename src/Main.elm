@@ -21,8 +21,8 @@ import Svg.Attributes
 
 
 type alias Model =
-    { fittestDNA : List Circle
-    , candidateDNA : List Circle
+    { fittest : List Circle
+    , candidate : List Circle
     }
 
 
@@ -33,7 +33,7 @@ type alias Circle =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { fittestDNA = [], candidateDNA = [] }
+    ( { fittest = [], candidate = [] }
     , Cmd.none
     )
 
@@ -63,7 +63,7 @@ update msg model =
             ( model, Random.generate InitialDNA (Random.list 10 randomCircle) )
 
         InitialDNA circles ->
-            ( { model | fittestDNA = circles }, Cmd.none )
+            ( { model | fittest = circles }, Cmd.none )
 
 
 
