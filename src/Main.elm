@@ -99,8 +99,8 @@ update msg model =
         Start ->
             ( model, Random.generate InitialDNA (Random.list numberOfCircles randomCircle) )
 
-        InitialDNA circles ->
-            ( { model | fittest = circles }, Cmd.none )
+        InitialDNA image ->
+            ( { model | fittest = image }, Cmd.none )
 
 
 
