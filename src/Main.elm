@@ -45,6 +45,7 @@ maximumAlpha =
 
 type alias Model =
     { fittest : Image
+    , fittestFitness : Float
     , candidate : Image
     }
 
@@ -63,7 +64,7 @@ type alias Image =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { fittest = [], candidate = [] }
+    ( { fittest = [], fittestFitness = 0.0, candidate = [] }
     , Cmd.none
     )
 
@@ -95,6 +96,11 @@ type Msg
     | RequestImageData
 
 
+checkFitness : Array (Array Int) -> Float
+checkFitness rgbValues =
+    5.0
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -105,14 +111,17 @@ update msg model =
             ( model, Random.generate InitialDNA (Random.list numberOfCircles randomCircle) )
 
         InitialDNA image ->
-            ( { model | fittest = image }, Cmd.none )
+            ( { model | fittest = image, fittestFitness = 0 }, Cmd.none )
 
         ImageData rgbValues ->
             let
-                test =
-                    Debug.log "image arrays" rgbValues
+                candidateFitness = checkFitness rgbValues
             in
-                ( model, Cmd.none )
+                if candidateFitness > model.fittestFitness then
+                    ( { model | fittest = model.candidate, fittestFitness = candidateFitness }, Cmd.none)
+                else
+                    ( model, Cmd.none )
+
 
         RequestImageData ->
             ( model, requestImageDetails "" )
@@ -150,6 +159,7 @@ view model =
                 [ drawCandidate model.fittest ]
             ]
         , button [ Html.Events.onClick RequestImageData ] [ text "Send" ]
+        , div [] [ text <| toString model.fittestFitness ]
         ]
 
 
