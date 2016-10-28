@@ -19,8 +19,8 @@ import Random
 
 
 type alias Model =
-    { fittestDNA : String
-    , candidateDNA : String
+    { fittestDNA : List Circle
+    , candidateDNA : List Circle
     }
 
 
@@ -31,7 +31,7 @@ type alias Circle =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { fittestDNA = "dnA", candidateDNA = "hey" }
+    ( { fittestDNA = [], candidateDNA = [] }
     , Cmd.none
     )
 
@@ -60,8 +60,8 @@ update msg model =
         Start ->
             ( model, Random.generate InitialDNA (Random.list 10 randomCircle) )
 
-        InitialDNA _ ->
-            ( model, Cmd.none )
+        InitialDNA circles ->
+            ( { model | fittestDNA = circles }, Cmd.none )
 
 
 
