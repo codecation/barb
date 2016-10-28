@@ -23,8 +23,9 @@ type alias Model =
     , candidateDNA : String
     }
 
+
 type alias Circle =
-    { center : (Int, Int)
+    { center : ( Int, Int )
     }
 
 
@@ -37,7 +38,7 @@ init =
 
 randomCircle : Random.Generator Circle
 randomCircle =
-   Random.map Circle (Random.pair (Random.int -200 200) (Random.int -200 200))
+    Random.map Circle (Random.pair (Random.int -200 200) (Random.int -200 200))
 
 
 
@@ -61,7 +62,6 @@ update msg model =
 
         InitialDNA _ ->
             ( model, Cmd.none )
-
 
 
 
