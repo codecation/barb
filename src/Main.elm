@@ -46,6 +46,7 @@ type alias Model =
     { fittest : Image
     , fittestFitness : Float
     , candidate : Image
+    , iterations : Int
     }
 
 
@@ -63,7 +64,7 @@ type alias Image =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { fittest = [], fittestFitness = 0.0, candidate = [] }
+    ( { fittest = [], fittestFitness = 0.0, candidate = [], iterations = 0 }
     , Cmd.none
     )
 
@@ -93,6 +94,8 @@ type Msg
     | GenerateFirstImage Image
     | ReceiveImageData ( List Int, List Int )
     | RequestImageData
+    | GenerateNewCandidate
+    | UpdateCandidate Image
 
 
 checkFitness : ( List Int, List Int ) -> Float
@@ -116,9 +119,14 @@ checkFitness ( uploadedImage, candidateImage ) =
         1 - (sumOfSquares / toFloat (maximumDifference))
 
 
+-- mutate : Image -> Image
+-- mutate image =
+
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
+    case Debug.log "msg" msg of
         NoOp ->
             ( model, Cmd.none )
 
@@ -134,12 +142,21 @@ update msg model =
                     checkFitness rgbValues
             in
                 if candidateFitness > model.fittestFitness then
-                    ( { model | fittest = model.candidate, fittestFitness = candidateFitness }, Cmd.none )
+                    let
+                        newModel = { model | fittest = model.candidate, fittestFitness = candidateFitness, iterations = model.iterations + 1 }
+                    in
+                        update GenerateNewCandidate newModel
                 else
-                    ( model, Cmd.none )
+                    update GenerateNewCandidate { model | iterations = model.iterations + 1 }
 
         RequestImageData ->
             ( model, requestImageDetails "" )
+
+        GenerateNewCandidate ->
+            ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
+
+        UpdateCandidate image ->
+            update RequestImageData { model | candidate = image } 
 
 
 
@@ -171,11 +188,12 @@ view model =
             [ img [ src "img/manet.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container images-image_container--clickable" ]
             [ div [ styleUploadedImageSize, Html.Events.onClick Start, class "images-image_container-generated_image_canvas" ]
-                [ drawCandidate model.fittest ]
+                [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
             [ button [ Html.Events.onClick RequestImageData ] [ text "Send" ]
             , div [] [ text <| toString model.fittestFitness ]
+            , div [] [ text <| toString model.iterations ]
             ]
         ]
 
