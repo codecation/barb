@@ -1,6 +1,5 @@
 port module Main exposing (..)
 
-import Array exposing (Array)
 import Collage
 import Color
 import Debug
@@ -92,13 +91,21 @@ type Msg
     = NoOp
     | Start
     | InitialDNA Image
-    | ImageData (Array (Array Int))
+    | ImageData (List Int, List Int)
     | RequestImageData
 
 
-checkFitness : Array (Array Int) -> Float
-checkFitness rgbValues =
-    5.0
+checkFitness : (List Int, List Int) -> Float
+checkFitness (uploadedImage, candidateImage) =
+    let
+        pixelCount = List.length uploadedImage
+        differences = List.map2 (-) uploadedImage candidateImage
+        squares = List.map (\x -> x ^ 2) differences
+        sumOfSquares = List.foldr (+) 0 squares
+        maximumDifference = pixelCount * 256 * 256
+    in
+        1 - (sumOfSquares / toFloat(maximumDifference))
+
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -201,4 +208,4 @@ main =
 port requestImageDetails : String -> Cmd msg
 
 
-port imageDetails : (Array (Array Int) -> msg) -> Sub msg
+port imageDetails : ((List Int, List Int) -> msg) -> Sub msg
