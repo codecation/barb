@@ -91,21 +91,29 @@ type Msg
     = NoOp
     | Start
     | GenerateFirstImage Image
-    | ReceiveImageData (List Int, List Int)
+    | ReceiveImageData ( List Int, List Int )
     | RequestImageData
 
 
-checkFitness : (List Int, List Int) -> Float
-checkFitness (uploadedImage, candidateImage) =
+checkFitness : ( List Int, List Int ) -> Float
+checkFitness ( uploadedImage, candidateImage ) =
     let
-        pixelCount = List.length uploadedImage
-        differences = List.map2 (-) uploadedImage candidateImage
-        squares = List.map (\x -> x ^ 2) differences
-        sumOfSquares = List.foldr (+) 0 squares
-        maximumDifference = pixelCount * 256 * 256
-    in
-        1 - (sumOfSquares / toFloat(maximumDifference))
+        pixelCount =
+            List.length uploadedImage
 
+        differences =
+            List.map2 (-) uploadedImage candidateImage
+
+        squares =
+            List.map (\x -> x ^ 2) differences
+
+        sumOfSquares =
+            List.foldr (+) 0 squares
+
+        maximumDifference =
+            pixelCount * 256 * 256
+    in
+        1 - (sumOfSquares / toFloat (maximumDifference))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -122,13 +130,13 @@ update msg model =
 
         ReceiveImageData rgbValues ->
             let
-                candidateFitness = checkFitness rgbValues
+                candidateFitness =
+                    checkFitness rgbValues
             in
                 if candidateFitness > model.fittestFitness then
-                    ( { model | fittest = model.candidate, fittestFitness = candidateFitness }, Cmd.none)
+                    ( { model | fittest = model.candidate, fittestFitness = candidateFitness }, Cmd.none )
                 else
                     ( model, Cmd.none )
-
 
         RequestImageData ->
             ( model, requestImageDetails "" )
@@ -208,4 +216,4 @@ main =
 port requestImageDetails : String -> Cmd msg
 
 
-port imageDetails : ((List Int, List Int) -> msg) -> Sub msg
+port imageDetails : (( List Int, List Int ) -> msg) -> Sub msg
