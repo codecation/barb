@@ -22,6 +22,7 @@ import Random
 -- 5. Repeat
 -- MODEL
 
+
 numberOfCircles : Int
 numberOfCircles =
     200
@@ -35,6 +36,7 @@ minimumRadiusLength =
 maximumRadiusLength : Float
 maximumRadiusLength =
     80.0
+
 
 maximumAlpha : Float
 maximumAlpha =
@@ -106,8 +108,11 @@ update msg model =
             ( { model | fittest = image }, Cmd.none )
 
         ImageData rgbValues ->
-            Debug.crash "not implemented yet"
-            ( model, Cmd.none )
+            let
+                test =
+                    Debug.log "image arrays" rgbValues
+            in
+                ( model, Cmd.none )
 
         RequestImageData ->
             ( model, requestImageDetails "" )
@@ -184,5 +189,6 @@ main =
 
 
 port requestImageDetails : String -> Cmd msg
+
 
 port imageDetails : (Array (Array Int) -> msg) -> Sub msg
