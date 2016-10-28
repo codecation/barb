@@ -1,5 +1,6 @@
-module Main exposing (..)
+port module Main exposing (..)
 
+import Array exposing (Array)
 import Collage
 import Color
 import Debug
@@ -88,6 +89,7 @@ type Msg
     = NoOp
     | Start
     | InitialDNA Image
+    | ImageData (Array (Array Int))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -101,6 +103,12 @@ update msg model =
 
         InitialDNA image ->
             ( { model | fittest = image }, Cmd.none )
+
+        ImageData rgbValues ->
+            Debug.crash "not implemented yet"
+            ( model, Cmd.none )
+
+
 
 
 
@@ -159,7 +167,7 @@ drawCircle circle =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    imageDetails ImageData
 
 
 main : Program Never
@@ -170,3 +178,8 @@ main =
         , view = view
         , subscriptions = subscriptions
         }
+
+
+port requestImageDetails : String -> Cmd msg
+
+port imageDetails : (Array (Array Int) -> msg) -> Sub msg
