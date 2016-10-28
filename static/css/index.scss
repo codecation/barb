@@ -15,30 +15,25 @@ body {
 
 .images-image_container {
   background: #fff;
-  box-shadow: 0 20px 40px rgba(0, 0 ,0, .2);
+  box-shadow: 0 20px 40px rgba(0, 0 ,0, .3);
   margin: 0 4vw;
   position: relative;
+  user-select: none;
 
   img { display: block }
 }
 
-.images-image_container .controls {
-  left: 50%;
-  position: absolute;
-  top: calc(100% + 1rem);
-  transform: translateX(-50%);
-}
-
-.controls-start {
-  background: #aab3f1;
-  border: 0;
-  border-radius: 5em;
+.images-image_container--clickable {
   cursor: pointer;
-  font-size: 1rem;
-  outline: none;
-  padding: 1rem 2rem;
-  user-select: none;
-  -webkit-appearance: none;
+  transition: .5s ease;
 
-  &:hover { background: #bfc7fb; }
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 25px 45px rgba(0, 0 ,0, .2);
+  }
+
+  &:active {
+    transition-duration: .05s;
+    transform: scale(1.025);
+  }
 }
