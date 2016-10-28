@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Random
 
 
 -- Algorithm
@@ -22,12 +23,26 @@ type alias Model =
     , candidateDNA : String
     }
 
+type alias Circle =
+    { center : (Int, Int)
+    }
+
 
 init : ( Model, Cmd Msg )
 init =
     ( { fittestDNA = "dnA", candidateDNA = "hey" }
     , Cmd.none
     )
+
+
+circleFromTuple : (Int, Int) -> Circle
+circleFromTuple tuple =
+  { center = tuple }
+
+
+randomCircle : Random.Generator Circle
+randomCircle =
+   Random.map circleFromTuple (Random.pair (Random.int -200 200) (Random.int -200 200))
 
 
 
@@ -37,6 +52,7 @@ init =
 type Msg
     = NoOp
     | Start
+    | InitialDNA (List Circle)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -46,7 +62,11 @@ update msg model =
             ( model, Cmd.none )
 
         Start ->
+            ( model, Random.generate InitialDNA (Random.list 10 randomCircle) )
+
+        InitialDNA _ ->
             ( model, Cmd.none )
+
 
 
 
