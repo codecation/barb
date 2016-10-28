@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Collage
 import Color
+import Debug
 import Element
 import Html exposing (..)
 import Html.App
@@ -32,6 +33,7 @@ type alias Model =
 type alias Circle =
     { center : ( Int, Int )
     , radius : Float
+    , color : Color.Color
     }
 
 
@@ -44,9 +46,16 @@ init =
 
 randomCircle : Random.Generator Circle
 randomCircle =
-    Random.map2 Circle (Random.pair (Random.int -200 200) (Random.int -200 200)) (Random.float 1.0 5.0)
+    Random.map3
+        Circle
+        (Random.pair (Random.int -200 200) (Random.int -200 200))
+        (Random.float 1.0 50.0)
+        rgb
 
 
+rgb : Random.Generator Color.Color
+rgb =
+    Random.map3 Color.rgb (Random.int 0 255) (Random.int 0 255) (Random.int 0 255)
 
 -- UPDATE
 
@@ -99,7 +108,7 @@ view model =
             [ img [ src "http://yumurtaliekmek.com/wp-content/uploads/2014/11/manet-teknede-0711.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container" ]
             [ div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
-                [ drawCandidate model.candidate ]
+                [ drawCandidate model.fittest ]
             , div [ class "controls" ]
                 [ button [ Html.Events.onClick Start, class "controls-start" ] [ text "Start" ] ]
             ]
@@ -116,7 +125,7 @@ drawCandidate circles =
 
 drawCircle : Circle -> Collage.Form
 drawCircle circle =
-    Collage.circle circle.radius |> Collage.filled (Color.rgb 128 128 128)
+    Collage.circle circle.radius |> Collage.filled circle.color
 
 
 -- SUBSCRIPTIONS
