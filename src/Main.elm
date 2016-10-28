@@ -24,9 +24,10 @@ import Svg.Attributes
 -- MODEL
 
 
-numberOfCircles = 100
+numberOfCircles = 200
 minimumRadiusLength = 1.0
-maximumRadiusLength = 50.0
+maximumRadiusLength = 80.0
+maximumAlpha = 0.8
 
 
 type alias Model =
@@ -39,6 +40,7 @@ type alias Circle =
     { center : ( Float, Float )
     , radius : Float
     , color : Color.Color
+    , alpha : Float
     }
 
 
@@ -51,15 +53,16 @@ init =
 
 randomCircle : Random.Generator Circle
 randomCircle =
-    Random.map3
+    Random.map4
         Circle
         (Random.pair (Random.float -200 200) (Random.float -200 200))
         (Random.float minimumRadiusLength maximumRadiusLength)
-        rgb
+        randomColor
+        (Random.float 0 maximumAlpha)
 
 
-rgb : Random.Generator Color.Color
-rgb =
+randomColor : Random.Generator Color.Color
+randomColor =
     Random.map3 Color.rgb (Random.int 0 255) (Random.int 0 255) (Random.int 0 255)
 
 -- UPDATE
@@ -130,7 +133,10 @@ drawCandidate circles =
 
 drawCircle : Circle -> Collage.Form
 drawCircle circle =
-    Collage.circle circle.radius |> Collage.filled circle.color |> Collage.move circle.center
+    Collage.circle circle.radius 
+        |> Collage.filled circle.color 
+        |> Collage.move circle.center 
+        |> Collage.alpha circle.alpha
 
 
 -- SUBSCRIPTIONS
