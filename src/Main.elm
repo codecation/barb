@@ -145,9 +145,9 @@ update msg model =
                     let
                         newModel = { model | fittest = model.candidate, fittestFitness = candidateFitness, iterations = model.iterations + 1 }
                     in
-                        update GenerateNewCandidate newModel
+                        ( newModel, Cmd.none )
                 else
-                    update GenerateNewCandidate { model | iterations = model.iterations + 1 }
+                    ( { model | iterations = model.iterations + 1 }, Cmd.none )
 
         RequestImageData ->
             ( model, requestImageDetails "" )
@@ -156,7 +156,7 @@ update msg model =
             ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
 
         UpdateCandidate image ->
-            update RequestImageData { model | candidate = image } 
+            ( { model | candidate = image }, Cmd.none )
 
 
 
@@ -191,9 +191,10 @@ view model =
                 [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
-            [ button [ Html.Events.onClick RequestImageData ] [ text "Send" ]
+            [ button [ Html.Events.onClick RequestImageData ] [ text "RequestImageData" ]
+            , button [ Html.Events.onClick GenerateNewCandidate ] [ text "GenerateNewCandidate" ]
             , div [] [ text <| toString model.fittestFitness ]
-            , div [] [ text <| toString model.iterations ]
+            , div [] [ text <| "iterations: " ++ toString model.iterations ]
             ]
         ]
 
