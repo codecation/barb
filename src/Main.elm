@@ -118,7 +118,7 @@ update msg model =
             ( model, Random.generate InitialDNA (Random.list numberOfCircles randomCircle) )
 
         InitialDNA image ->
-            ( { model | fittest = image, fittestFitness = 0 }, Cmd.none )
+            ( { model | fittest = image, fittestFitness = 0, candidate = image }, Cmd.none )
 
         ImageData rgbValues ->
             let
