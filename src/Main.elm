@@ -35,14 +35,9 @@ init =
     )
 
 
-circleFromTuple : (Int, Int) -> Circle
-circleFromTuple tuple =
-  { center = tuple }
-
-
 randomCircle : Random.Generator Circle
 randomCircle =
-   Random.map circleFromTuple (Random.pair (Random.int -200 200) (Random.int -200 200))
+   Random.map Circle (Random.pair (Random.int -200 200) (Random.int -200 200))
 
 
 
