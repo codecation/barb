@@ -90,8 +90,8 @@ randomColor =
 type Msg
     = NoOp
     | Start
-    | InitialDNA Image
-    | ImageData (List Int, List Int)
+    | GenerateFirstImage Image
+    | ReceiveImageData (List Int, List Int)
     | RequestImageData
 
 
@@ -115,12 +115,12 @@ update msg model =
             ( model, Cmd.none )
 
         Start ->
-            ( model, Random.generate InitialDNA (Random.list numberOfCircles randomCircle) )
+            ( model, Random.generate GenerateFirstImage (Random.list numberOfCircles randomCircle) )
 
-        InitialDNA image ->
+        GenerateFirstImage image ->
             ( { model | fittest = image, fittestFitness = 0, candidate = image }, Cmd.none )
 
-        ImageData rgbValues ->
+        ReceiveImageData rgbValues ->
             let
                 candidateFitness = checkFitness rgbValues
             in
@@ -192,7 +192,7 @@ drawCircle circle =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    imageDetails ImageData
+    imageDetails ReceiveImageData
 
 
 main : Program Never
