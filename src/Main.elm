@@ -10,8 +10,6 @@ import Html.App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Random
-import Svg
-import Svg.Attributes
 
 
 -- Algorithm
@@ -24,19 +22,21 @@ import Svg.Attributes
 -- 5. Repeat
 -- MODEL
 
-
+numberOfCircles : Int
 numberOfCircles =
     200
 
 
+minimumRadiusLength : Float
 minimumRadiusLength =
     1.0
 
 
+maximumRadiusLength : Float
 maximumRadiusLength =
     80.0
 
-
+maximumAlpha : Float
 maximumAlpha =
     0.85
 
@@ -90,6 +90,7 @@ type Msg
     | Start
     | InitialDNA Image
     | ImageData (Array (Array Int))
+    | RequestImageData
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -108,7 +109,8 @@ update msg model =
             Debug.crash "not implemented yet"
             ( model, Cmd.none )
 
-
+        RequestImageData ->
+            ( model, requestImageDetails "" )
 
 
 
@@ -142,6 +144,7 @@ view model =
             [ div [ styleUploadedImageSize, Html.Events.onClick Start, class "images-image_container-generated_image_canvas" ]
                 [ drawCandidate model.fittest ]
             ]
+        , button [ Html.Events.onClick RequestImageData ] [ text "Send" ]
         ]
 
 
