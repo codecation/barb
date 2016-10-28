@@ -20,7 +20,6 @@ import Svg.Attributes
 -- 4. If the new image looks more like the source image than the previous
 --    image did, then overwrite the current DNA with the new DNA
 -- 5. Repeat
-
 -- MODEL
 
 
@@ -70,6 +69,7 @@ update msg model =
             ( { model | fittest = circles }, Cmd.none )
 
 
+
 -- VIEW
 
 
@@ -104,7 +104,7 @@ view model =
             [ img [ src "http://yumurtaliekmek.com/wp-content/uploads/2014/11/manet-teknede-0711.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container" ]
             [ div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
-                [drawCandidate model.candidate]
+                [ drawCandidate model.candidate ]
             , loaderRect
             , div [ class "controls" ]
                 [ button [ Html.Events.onClick Start, class "controls-start" ] [ text "Start" ] ]
@@ -112,9 +112,14 @@ view model =
         ]
 
 
-drawCandidate : (List Circle) -> Html Msg
+drawCandidate : List Circle -> Html Msg
 drawCandidate circles =
-    Collage.collage 300 300 [ Collage.circle 10.0 |> Collage.filled (Color.rgb 128 128 128) ] |> Element.toHtml
+    Collage.collage 300
+        300
+        [ Collage.circle 10.0 |> Collage.filled (Color.rgb 128 128 128)
+        ]
+        |> Element.toHtml
+
 
 
 -- SUBSCRIPTIONS
