@@ -46,6 +46,7 @@ type alias Model =
     { fittest : Image
     , fittestFitness : Float
     , candidate : Image
+    , candidateFitness : Float
     , iterations : Int
     }
 
@@ -64,7 +65,7 @@ type alias Image =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { fittest = [], fittestFitness = 0.0, candidate = [], iterations = 0 }
+    ( { fittest = [], fittestFitness = 0.0, candidate = [], candidateFitness = 0.0, iterations = 0 }
     , Cmd.none
     )
 
@@ -143,11 +144,12 @@ update msg model =
             in
                 if candidateFitness > model.fittestFitness then
                     let
-                        newModel = { model | fittest = model.candidate, fittestFitness = candidateFitness, iterations = model.iterations + 1 }
+                        newModel =
+                          { model | fittest = model.candidate, fittestFitness = candidateFitness, iterations = model.iterations + 1 }
                     in
                         ( newModel, Cmd.none )
                 else
-                    ( { model | iterations = model.iterations + 1 }, Cmd.none )
+                    ( { model | candidateFitness = candidateFitness, iterations = model.iterations + 1 }, Cmd.none )
 
         RequestImageData ->
             ( model, requestImageDetails "" )
@@ -197,7 +199,8 @@ view model =
         , div [ class "debug_area" ]
             [ button [ Html.Events.onClick RequestImageData ] [ text "RequestImageData" ]
             , button [ Html.Events.onClick GenerateNewCandidate ] [ text "GenerateNewCandidate" ]
-            , div [] [ text <| "fittest fitness: " ++ toString model.fittestFitness ]
+            , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
+            , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
             , div [] [ text <| "iterations: " ++ toString model.iterations ]
             ]
         ]
