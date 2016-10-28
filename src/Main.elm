@@ -27,7 +27,7 @@ import Svg.Attributes
 numberOfCircles = 200
 minimumRadiusLength = 1.0
 maximumRadiusLength = 80.0
-maximumAlpha = 0.8
+maximumAlpha = 0.9
 
 
 type alias Model =
