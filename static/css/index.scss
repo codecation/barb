@@ -35,5 +35,6 @@ body {
   &:active {
     transition-duration: .05s;
     transform: scale(1.025);
+    box-shadow: 0 22px 42px rgba(0, 0 ,0, .25);
   }
 }
