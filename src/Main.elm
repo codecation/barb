@@ -5,6 +5,8 @@ import Html.App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Random
+import Svg
+import Svg.Attributes
 
 
 -- Algorithm
@@ -68,12 +70,28 @@ update msg model =
 -- VIEW
 
 
-uploadedImageSize : Attribute msg
-uploadedImageSize =
+imageWidth : String
+imageWidth =
+    "300px"
+
+
+imageHeight : String
+imageHeight =
+    "300px"
+
+
+styleUploadedImageSize : Attribute msg
+styleUploadedImageSize =
     style
-        [ ( "width", "300px" )
-        , ( "height", "300px" )
+        [ ( "width", imageWidth )
+        , ( "height", imageHeight )
         ]
+
+
+loaderRect : Html.Html msg
+loaderRect =
+    svg [ Svg.Attributes.width imageWidth, Svg.Attributes.height imageHeight, class "images-image_container-loader" ]
+        [ Svg.rect [ Svg.Attributes.x "0", Svg.Attributes.y "0", Svg.Attributes.width "100%", Svg.Attributes.height "100%" ] [] ]
 
 
 view : Model -> Html Msg
@@ -82,8 +100,9 @@ view model =
         [ div [ class "images-image_container" ]
             [ img [ src "http://yumurtaliekmek.com/wp-content/uploads/2014/11/manet-teknede-0711.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container" ]
-            [ div [ uploadedImageSize, class "images-image_container-generated_image_canvas" ]
+            [ div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
                 []
+            , loaderRect
             , div [ class "controls" ]
                 [ button [ Html.Events.onClick Start, class "controls-start" ] [ text "Start" ] ]
             ]
