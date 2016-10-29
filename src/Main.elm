@@ -83,8 +83,6 @@ randomColor =
 
 type Msg
     = NoOp
-    | Start
-    | GenerateFirstImage Image
     | CalculateFitness ( List Int, List Int )
     | RequestImageData
     | GenerateNewCandidate
@@ -122,12 +120,6 @@ update msg model =
     case msg of
         NoOp ->
             ( model, Cmd.none )
-
-        Start ->
-            ( model, Random.generate GenerateFirstImage (Random.list numberOfCircles randomCircle) )
-
-        GenerateFirstImage image ->
-            ( { model | fittest = image, candidate = image }, Cmd.none )
 
         CalculateFitness imageDataForBothImages ->
             let
@@ -185,9 +177,8 @@ view model =
                 [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
-            [ button [ Html.Events.onClick Start ] [ text "Start" ]
+            [ button [ Html.Events.onClick GenerateNewCandidate ] [ text "Generate New Candidate" ]
             , button [ Html.Events.onClick RequestImageData ] [ text "Calculate Fitness" ]
-            , button [ Html.Events.onClick GenerateNewCandidate ] [ text "Generate New Candidate" ]
             , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
             , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
             , div [] [ text <| "iterations: " ++ toString model.iterations ]
