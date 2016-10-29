@@ -19,7 +19,7 @@ import Exts.Float
 
 numberOfCircles : Int
 numberOfCircles =
-    600
+    400
 
 
 minimumRadiusLength : Float
@@ -29,7 +29,7 @@ minimumRadiusLength =
 
 maximumRadiusLength : Float
 maximumRadiusLength =
-    80.0
+    40.0
 
 
 maximumAlpha : Float
@@ -235,8 +235,7 @@ view model =
                 [ text <| toString model.iterations ]
             ]
         , div [ class "debug_area" ]
-            [ button [ Html.Events.onClick GenerateFirstCandidate ] [ text "Seed" ]
-            , button [ Html.Events.onClick RequestImageData ] [ text "Iterate" ]
+            [ button [ Html.Events.onClick GenerateFirstCandidate ] [ text "Go!" ]
             ]
         ]
 
