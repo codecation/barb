@@ -40,6 +40,7 @@ type alias Model =
     , candidate : Image
     , candidateFitness : Float
     , iterations : Int
+    , sourceImageRgbData : List Int
     }
 
 
@@ -57,7 +58,13 @@ type alias Image =
 
 init : ( Model, Cmd Msg )
 init =
-    ( { fittest = [], fittestFitness = 0.0, candidate = [], candidateFitness = 0.0, iterations = 0 }
+    ( { fittest = []
+      , fittestFitness = 0.0
+      , candidate = []
+      , candidateFitness = 0.0
+      , iterations = 0
+      , sourceImageRgbData = []
+      }
     , Cmd.none
     )
 
@@ -105,6 +112,7 @@ checkFitness ( uploadedImage, candidateImage ) =
 type Msg
     = CalculateFitness ( List Int, List Int )
     | RequestImageData
+    | Start
     | GenerateNewCandidate
     | UpdateCandidate Image
 
@@ -112,6 +120,12 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Start ->
+            -- update
+            --     GenerateNewCandidate
+            -- { model |
+            ( model, Cmd.none )
+
         CalculateFitness imageDataForBothImages ->
             let
                 newCandidateFitness =
@@ -178,7 +192,7 @@ view model =
                 [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
-            [ button [ Html.Events.onClick GenerateNewCandidate ] [ text "Seed" ]
+            [ button [ Html.Events.onClick Start ] [ text "Start" ]
             , button [ Html.Events.onClick RequestImageData ] [ text "Iterate" ]
             , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
             , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
