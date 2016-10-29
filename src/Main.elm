@@ -18,6 +18,24 @@ import Exts.Float
 -- MODEL
 
 
+type alias Model =
+    { fittest : List Polygon
+    , fittestFitness : Float
+    , fittestFitnessHistory : List Float
+    , candidate : List Polygon
+    , candidateFitness : Float
+    , candidateFitnessHistory : List Float
+    , iterations : Int
+    , imageDataForUploadedImage : List Int
+    }
+
+
+type alias Polygon =
+    { vertices : List ( Float, Float )
+    , color : Color
+    }
+
+
 numberOfPolygons : Int
 numberOfPolygons =
     125
@@ -48,24 +66,6 @@ maximumRGBValue =
     240
 
 
-type alias Model =
-    { fittest : List Polygon
-    , fittestFitness : Float
-    , fittestFitnessHistory : List Float
-    , candidate : List Polygon
-    , candidateFitness : Float
-    , candidateFitnessHistory : List Float
-    , iterations : Int
-    , sourceImageRgbData : List Int
-    }
-
-
-type alias Polygon =
-    { vertices : List ( Float, Float )
-    , color : Color
-    }
-
-
 init : ( Model, Cmd Msg )
 init =
     ( { fittest = []
@@ -75,7 +75,7 @@ init =
       , candidateFitness = 0.0
       , candidateFitnessHistory = List.repeat 25 0.0
       , iterations = 0
-      , sourceImageRgbData = []
+      , imageDataForUploadedImage = []
       }
     , Cmd.none
     )
@@ -188,10 +188,11 @@ shiftList existingList newListItem =
 
 
 type Msg
-    = CalculateFitness ( List Int, List Int )
-    | RequestImageData
-    | GenerateFirstCandidate
+    = CalculateFitness (List Int)
+    | Start
     | MutateCandidate
+    | RequestCandidateImage
+    | StoreUploadedImage (List Int)
     | UpdateCandidate (List Polygon)
     | Sleep
 
@@ -199,10 +200,27 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        CalculateFitness imageDataForBothImages ->
+        Start ->
+            ( model, requestUploadedImage "" )
+
+        StoreUploadedImage image ->
+            ( { model | imageDataForUploadedImage = image }
+            , Random.generate UpdateCandidate (Random.list numberOfPolygons randomPolygon)
+            )
+
+        UpdateCandidate image ->
+            update Sleep { model | candidate = image }
+
+        Sleep ->
+            ( model, Task.perform (always RequestCandidateImage) (always RequestCandidateImage) (Process.sleep 0) )
+
+        RequestCandidateImage ->
+            ( model, requestCandidateImage "" )
+
+        CalculateFitness candidateImage ->
             let
                 newCandidateFitness =
-                    checkFitness imageDataForBothImages
+                    checkFitness ( model.imageDataForUploadedImage, candidateImage )
             in
                 if newCandidateFitness > model.fittestFitness then
                     update MutateCandidate
@@ -224,20 +242,8 @@ update msg model =
                             , iterations = model.iterations + 1
                         }
 
-        RequestImageData ->
-            ( model, requestImageDetails "" )
-
-        GenerateFirstCandidate ->
-            ( model, Random.generate UpdateCandidate (Random.list numberOfPolygons randomPolygon) )
-
         MutateCandidate ->
             ( model, Random.generate UpdateCandidate (mutatePolygons model.candidate) )
-
-        UpdateCandidate image ->
-            update Sleep { model | candidate = image }
-
-        Sleep ->
-            ( model, Task.perform (always RequestImageData) (always RequestImageData) (Process.sleep 0) )
 
 
 
@@ -308,7 +314,7 @@ view model =
             , graphList model.fittestFitnessHistory
             ]
         , div
-            [ Html.Events.onClick GenerateFirstCandidate
+            [ Html.Events.onClick Start
             , class "images-image_container images-image_container--hoverable"
             ]
             [ div
@@ -348,7 +354,10 @@ drawPolygon polygon =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    imageDetails CalculateFitness
+    Sub.batch
+        [ uploadedImage StoreUploadedImage
+        , candidateImage CalculateFitness
+        ]
 
 
 main : Program Never
@@ -361,7 +370,13 @@ main =
         }
 
 
-port requestImageDetails : String -> Cmd msg
+port requestUploadedImage : String -> Cmd msg
 
 
-port imageDetails : (( List Int, List Int ) -> msg) -> Sub msg
+port uploadedImage : (List Int -> msg) -> Sub msg
+
+
+port requestCandidateImage : String -> Cmd msg
+
+
+port candidateImage : (List Int -> msg) -> Sub msg

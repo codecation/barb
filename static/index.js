@@ -22,9 +22,12 @@ var getGeneratedImageData = function() {
   return canvas.getContext('2d').getImageData(0, 0, 100, 100).data;
 };
 
-app.ports.requestImageDetails.subscribe(function(_) {
+app.ports.requestUploadedImage.subscribe(function(_) {
   var uploadedImageData = Array.from(getUploadedImageData());
+  app.ports.uploadedImage.send(uploadedImageData)
+});
+
+app.ports.requestCandidateImage.subscribe(function(_) {
   var generatedImageData = Array.from(getGeneratedImageData());
-  var allImageData = [uploadedImageData, generatedImageData];
-  app.ports.imageDetails.send(allImageData);
+  app.ports.candidateImage.send(generatedImageData);
 });
