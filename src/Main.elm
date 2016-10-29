@@ -11,31 +11,20 @@ import Random
 import Random.Extra
 import Task
 import Process
-import Debug
 import Exts.Float
 
 
 -- MODEL
 
 
-numberOfCircles : Int
-numberOfCircles =
-    150
-
-
-minimumRadiusLength : Float
-minimumRadiusLength =
-    1.0
-
-
-maximumRadiusLength : Float
-maximumRadiusLength =
-    80.0
+numberOfPolygons : Int
+numberOfPolygons =
+    125
 
 
 maximumAlpha : Float
 maximumAlpha =
-    0.7
+    0.9
 
 
 minimumAlpha : Float
@@ -55,18 +44,17 @@ type alias Model =
     }
 
 
-type alias Circle =
-    { center : ( Float, Float )
-    , radius : Float
+type alias Polygon =
+    { vertices : List ( Float, Float )
     , color :
         Color.Color
-        -- TODO - combine color and alpha into rgba val
+        -- todo: combine color and alpha to rgba
     , alpha : Float
     }
 
 
 type alias Image =
-    List Circle
+    List Polygon
 
 
 init : ( Model, Cmd Msg )
@@ -84,25 +72,13 @@ init =
     )
 
 
-randomCircle : Random.Generator Circle
-randomCircle =
-    Random.map4
-        Circle
-        (Random.pair (Random.float -50 50) (Random.float -50 50))
-        (Random.float minimumRadiusLength maximumRadiusLength)
+randomPolygon : Random.Generator Polygon
+randomPolygon =
+    Random.map3
+        Polygon
+        (Random.list 3 (Random.pair (Random.float -50 50) (Random.float -50 50)))
         randomColor
         (Random.float minimumAlpha maximumAlpha)
-
-
-maybeMutateCenter : ( Float, Float ) -> Random.Generator ( Float, Float )
-maybeMutateCenter ( x, y ) =
-    Random.Extra.frequency
-        [ ( 90.0, Random.Extra.constant ( x, y ) )
-        , ( 10.0
-          , (Random.float -20.0 20.0)
-                `Random.andThen` \f -> Random.Extra.constant ( (f + x), (f + y) )
-          )
-        ]
 
 
 randomColor : Random.Generator Color.Color
@@ -129,41 +105,45 @@ maybeMutateAlpha alpha =
         ]
 
 
-maybeMutateRadius : Float -> Random.Generator Float
-maybeMutateRadius radius =
+mutatePolygon : Polygon -> Random.Generator Polygon
+mutatePolygon polygon =
+    Random.map3
+        Polygon
+        (maybeMutateVertices polygon.vertices)
+        (maybeMutateColor polygon.color)
+        (maybeMutateAlpha polygon.alpha)
+
+
+sometimesMutate : Polygon -> Random.Generator Polygon
+sometimesMutate polygon =
     Random.Extra.frequency
-        [ ( 90.0, Random.Extra.constant radius )
-        , ( 10.0
-          , (Random.float -40.0 40.0)
-                `Random.andThen` \f -> Random.Extra.constant (clamp minimumRadiusLength maximumRadiusLength (f + radius))
-          )
+        [ ( 90.0, Random.Extra.constant polygon )
+        , ( 10.0, mutatePolygon polygon )
         ]
 
 
-mutateCircle : Circle -> Random.Generator Circle
-mutateCircle circle =
-    Random.map4
-        Circle
-        (maybeMutateCenter circle.center)
-        (maybeMutateRadius circle.radius)
-        (maybeMutateColor circle.color)
-        (maybeMutateAlpha circle.alpha)
-
-
-sometimesMutate : Circle -> Random.Generator Circle
-sometimesMutate circle =
-    Random.Extra.frequency
-        [ ( 90.0, Random.Extra.constant circle )
-        , ( 9.0, mutateCircle circle )
-        , ( 1.0, randomCircle )
-        ]
-
-
-mutateImage : List Circle -> Random.Generator (List Circle)
-mutateImage listOfCircles =
+maybeMutateVertices : List ( Float, Float ) -> Random.Generator (List ( Float, Float ))
+maybeMutateVertices vertices =
     let
         listOfGenerators =
-            List.map sometimesMutate listOfCircles
+            List.map sometimesMutateVertex vertices
+    in
+        Random.Extra.together listOfGenerators
+
+
+sometimesMutateVertex : ( Float, Float ) -> Random.Generator ( Float, Float )
+sometimesMutateVertex ( x, y ) =
+    Random.Extra.frequency
+        [ ( 90.0, Random.Extra.constant ( x, y ) )
+        , ( 10.0, (Random.float -30.0 30.0) `Random.andThen` \i -> Random.Extra.constant ( (i + x), (i + y) ) )
+        ]
+
+
+mutateImage : List Polygon -> Random.Generator (List Polygon)
+mutateImage polygons =
+    let
+        listOfGenerators =
+            List.map sometimesMutate polygons
     in
         Random.Extra.together listOfGenerators
 
@@ -239,7 +219,7 @@ update msg model =
             ( model, requestImageDetails "" )
 
         GenerateFirstCandidate ->
-            ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
+            ( model, Random.generate UpdateCandidate (Random.list numberOfPolygons randomPolygon) )
 
         MutateCandidate ->
             ( model, Random.generate UpdateCandidate (mutateImage model.candidate) )
@@ -336,19 +316,18 @@ view model =
 
 
 drawCandidate : Image -> Html Msg
-drawCandidate circles =
+drawCandidate image =
     Collage.collage 100
         100
-        (List.map drawCircle circles)
+        (List.map drawPolygon image)
         |> Element.toHtml
 
 
-drawCircle : Circle -> Collage.Form
-drawCircle circle =
-    Collage.circle circle.radius
-        |> Collage.filled circle.color
-        |> Collage.move circle.center
-        |> Collage.alpha circle.alpha
+drawPolygon : Polygon -> Collage.Form
+drawPolygon polygon =
+    Collage.polygon polygon.vertices
+        |> Collage.filled polygon.color
+        |> Collage.alpha polygon.alpha
 
 
 
