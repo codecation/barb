@@ -85,12 +85,6 @@ randomCircle =
         (Random.float minimumAlpha maximumAlpha)
 
 
-
--- Random.map     : (a -> b) -> Generator a -> Generator b
--- Random.list    : Int -> Generator a -> Generator (List a)
--- Random.andThen : Generator a -> (a -> Generator b) -> Generator b
-
-
 sometimesReplace : Circle -> Random.Generator Circle
 sometimesReplace circle =
     Random.Extra.frequency
@@ -99,7 +93,7 @@ sometimesReplace circle =
         ]
 
 
-generateListWithRandomlyReplaceCircles : List Circle -> Random.Generator (List Circle)
+generateListWithRandomlyReplaceCircles : Image -> Random.Generator Image
 generateListWithRandomlyReplaceCircles listOfCircles =
     let
         listOfGenerators =
