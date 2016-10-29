@@ -103,7 +103,7 @@ maybeMutateCenter ( x, y ) =
                 `Random.andThen` \f -> Random.Extra.constant ( (f + x), (f + y) )
           )
         ]
-        
+
 
 randomColor : Random.Generator Color.Color
 randomColor =
@@ -114,7 +114,7 @@ maybeMutateColor : Color.Color -> Random.Generator Color.Color
 maybeMutateColor color =
     Random.Extra.frequency
         [ ( 90.0, Random.Extra.constant color )
-        , ( 10.0, randomColor)
+        , ( 10.0, randomColor )
         ]
 
 
@@ -191,7 +191,8 @@ checkFitness ( uploadedImage, candidateImage ) =
 
 shiftList : List Float -> Float -> List Float
 shiftList existingList newListItem =
-  List.append (List.drop 1 existingList) [newListItem]
+    List.append (List.drop 1 existingList) [ newListItem ]
+
 
 
 -- UPDATE
@@ -220,7 +221,7 @@ update msg model =
                             | fittest = model.candidate
                             , fittestFitness = newCandidateFitness
                             , fittestFitnessHistory =
-                                  shiftList model.fittestFitnessHistory (exaggeratePercentage newCandidateFitness)
+                                shiftList model.fittestFitnessHistory (exaggeratePercentage newCandidateFitness)
                             , iterations = model.iterations + 1
                             , candidateFitness = newCandidateFitness
                         }
@@ -229,7 +230,7 @@ update msg model =
                         { model
                             | candidateFitness = newCandidateFitness
                             , candidateFitnessHistory =
-                                  shiftList model.candidateFitnessHistory (exaggeratePercentage newCandidateFitness)
+                                shiftList model.candidateFitnessHistory (exaggeratePercentage newCandidateFitness)
                             , candidate = model.fittest
                             , iterations = model.iterations + 1
                         }
@@ -285,9 +286,11 @@ exaggeratePercentage : Float -> Float
 exaggeratePercentage number =
     (((number * 100) - 95) * 20) / 100
 
+
 graphBar : Float -> Html Msg
 graphBar percentage =
     div [ class "graph-bar", style [ ( "height", (displayablePercentage percentage) ) ] ] []
+
 
 graphList : List Float -> Html Msg
 graphList fitnessHistory =
