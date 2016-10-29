@@ -118,9 +118,21 @@ update msg model =
                     checkFitness imageDataForBothImages
             in
                 if candidateFitness > model.fittestFitness then
-                    ( { model | fittest = model.candidate, fittestFitness = candidateFitness, iterations = model.iterations + 1, candidateFitness = candidateFitness }, Cmd.none )
+                    ( { model
+                        | fittest = model.candidate
+                        , fittestFitness = candidateFitness
+                        , iterations = model.iterations + 1
+                        , candidateFitness = candidateFitness
+                      }
+                    , Cmd.none
+                    )
                 else
-                    ( { model | candidateFitness = candidateFitness, iterations = model.iterations + 1 }, Cmd.none )
+                    ( { model
+                        | candidateFitness = candidateFitness
+                        , iterations = model.iterations + 1
+                      }
+                    , Cmd.none
+                    )
 
         RequestImageData ->
             ( model, requestImageDetails "" )
