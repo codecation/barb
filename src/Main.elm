@@ -32,6 +32,21 @@ minimumAlpha =
     0.1
 
 
+maximumVertexDisplacement : Float
+maximumVertexDisplacement =
+    50
+
+
+minimumRGBValue : Int
+minimumRGBValue =
+    10
+
+
+maximumRGBValue : Int
+maximumRGBValue =
+    240
+
+
 type alias Model =
     { fittest : List Polygon
     , fittestFitness : Float
@@ -66,21 +81,6 @@ init =
       }
     , Cmd.none
     )
-
-
-maximumVertexDisplacement : Float
-maximumVertexDisplacement =
-    50
-
-
-minimumRGBValue : Int
-minimumRGBValue =
-    10
-
-
-maximumRGBValue : Int
-maximumRGBValue =
-    240
 
 
 randomPolygon : Random.Generator Polygon
