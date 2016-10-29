@@ -1,13 +1,14 @@
 port module Main exposing (..)
 
 import Collage
-import Color
+import Color exposing (Color)
 import Element
 import Html exposing (..)
 import Html.App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Random
+import Random exposing (Generator)
+import Random.Color
 import Random.Extra
 import Task
 import Process
@@ -62,7 +63,7 @@ type alias Model =
 type alias Polygon =
     { vertices : List ( Float, Float )
     , color :
-        Color.Color
+        Color
         -- todo: combine color and alpha to rgba
     , alpha : Float
     }
@@ -83,7 +84,7 @@ init =
     )
 
 
-randomPolygon : Random.Generator Polygon
+randomPolygon : Generator Polygon
 randomPolygon =
     Random.map3
         Polygon
@@ -94,28 +95,19 @@ randomPolygon =
                 (Random.float -maximumVertexDisplacement maximumVertexDisplacement)
             )
         )
-        randomColor
+        Random.Color.rgba
         (Random.float minimumAlpha maximumAlpha)
 
 
-randomColor : Random.Generator Color.Color
-randomColor =
-    Random.map3
-        Color.rgb
-        (Random.int minimumRGBValue maximumRGBValue)
-        (Random.int minimumRGBValue maximumRGBValue)
-        (Random.int minimumRGBValue maximumRGBValue)
-
-
-maybeMutateColor : Color.Color -> Random.Generator Color.Color
+maybeMutateColor : Color -> Generator Color
 maybeMutateColor color =
     Random.Extra.frequency
         [ ( 90.0, Random.Extra.constant color )
-        , ( 10.0, randomColor )
+        , ( 10.0, Random.Color.rgba )
         ]
 
 
-maybeMutateAlpha : Float -> Random.Generator Float
+maybeMutateAlpha : Float -> Generator Float
 maybeMutateAlpha alpha =
     Random.Extra.frequency
         [ ( 90.0, Random.Extra.constant alpha )
@@ -126,7 +118,7 @@ maybeMutateAlpha alpha =
         ]
 
 
-mutatePolygon : Polygon -> Random.Generator Polygon
+mutatePolygon : Polygon -> Generator Polygon
 mutatePolygon polygon =
     Random.map3
         Polygon
@@ -135,7 +127,7 @@ mutatePolygon polygon =
         (maybeMutateAlpha polygon.alpha)
 
 
-sometimesMutate : Polygon -> Random.Generator Polygon
+sometimesMutate : Polygon -> Generator Polygon
 sometimesMutate polygon =
     Random.Extra.frequency
         [ ( 90.0, Random.Extra.constant polygon )
@@ -144,7 +136,7 @@ sometimesMutate polygon =
         ]
 
 
-maybeMutateVertices : List ( Float, Float ) -> Random.Generator (List ( Float, Float ))
+maybeMutateVertices : List ( Float, Float ) -> Generator (List ( Float, Float ))
 maybeMutateVertices vertices =
     let
         listOfGenerators =
@@ -153,7 +145,7 @@ maybeMutateVertices vertices =
         Random.Extra.together listOfGenerators
 
 
-sometimesMutateVertex : ( Float, Float ) -> Random.Generator ( Float, Float )
+sometimesMutateVertex : ( Float, Float ) -> Generator ( Float, Float )
 sometimesMutateVertex ( x, y ) =
     Random.Extra.frequency
         [ ( 90.0, Random.Extra.constant ( x, y ) )
@@ -161,7 +153,7 @@ sometimesMutateVertex ( x, y ) =
         ]
 
 
-mutatePolygons : List Polygon -> Random.Generator (List Polygon)
+mutatePolygons : List Polygon -> Generator (List Polygon)
 mutatePolygons polygons =
     let
         listOfGenerators =
