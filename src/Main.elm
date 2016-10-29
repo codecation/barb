@@ -114,21 +114,21 @@ update msg model =
     case msg of
         CalculateFitness imageDataForBothImages ->
             let
-                candidateFitness =
+                newCandidateFitness =
                     checkFitness imageDataForBothImages
             in
-                if candidateFitness > model.fittestFitness then
+                if newCandidateFitness > model.fittestFitness then
                     ( { model
                         | fittest = model.candidate
-                        , fittestFitness = candidateFitness
+                        , fittestFitness = newCandidateFitness
                         , iterations = model.iterations + 1
-                        , candidateFitness = candidateFitness
+                        , candidateFitness = newCandidateFitness
                       }
                     , Cmd.none
                     )
                 else
                     ( { model
-                        | candidateFitness = candidateFitness
+                        | candidateFitness = newCandidateFitness
                         , iterations = model.iterations + 1
                       }
                     , Cmd.none
