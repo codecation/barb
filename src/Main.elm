@@ -11,6 +11,7 @@ import Random
 import Random.Extra
 import Task
 import Process
+import Debug
 import Exts.Float
 
 
@@ -45,8 +46,10 @@ minimumAlpha =
 type alias Model =
     { fittest : Image
     , fittestFitness : Float
+    , fittestFitnessHistory : List Float
     , candidate : Image
     , candidateFitness : Float
+    , candidateFitnessHistory : List Float
     , iterations : Int
     , sourceImageRgbData : List Int
     }
@@ -70,8 +73,10 @@ init : ( Model, Cmd Msg )
 init =
     ( { fittest = []
       , fittestFitness = 0.0
+      , fittestFitnessHistory = List.repeat 25 0.0
       , candidate = []
       , candidateFitness = 0.0
+      , candidateFitnessHistory = List.repeat 25 0.0
       , iterations = 0
       , sourceImageRgbData = []
       }
@@ -184,6 +189,10 @@ checkFitness ( uploadedImage, candidateImage ) =
         1 - (sumOfSquares / toFloat (maximumDifference))
 
 
+shiftList : List Float -> Float -> List Float
+shiftList existingList newListItem =
+  List.append (List.drop 1 existingList) [newListItem]
+
 
 -- UPDATE
 
@@ -210,6 +219,8 @@ update msg model =
                         { model
                             | fittest = model.candidate
                             , fittestFitness = newCandidateFitness
+                            , fittestFitnessHistory =
+                                  shiftList model.fittestFitnessHistory (exaggeratePercentage newCandidateFitness)
                             , iterations = model.iterations + 1
                             , candidateFitness = newCandidateFitness
                         }
@@ -217,6 +228,8 @@ update msg model =
                     update MutateCandidate
                         { model
                             | candidateFitness = newCandidateFitness
+                            , candidateFitnessHistory =
+                                  shiftList model.candidateFitnessHistory (exaggeratePercentage newCandidateFitness)
                             , candidate = model.fittest
                             , iterations = model.iterations + 1
                         }
@@ -268,25 +281,43 @@ displayablePercentage number =
         (toString rounded) ++ "%"
 
 
+exaggeratePercentage : Float -> Float
+exaggeratePercentage number =
+    (((number * 100) - 95) * 20) / 100
+
+graphBar : Float -> Html Msg
+graphBar percentage =
+    div [ class "graph-bar", style [ ( "height", (displayablePercentage percentage) ) ] ] []
+
+graphList : List Float -> Html Msg
+graphList fitnessHistory =
+    let
+        graphBars =
+            List.map (\x -> graphBar x) fitnessHistory
+    in
+        div [ class "graph" ] graphBars
+
+
 view : Model -> Html Msg
 view model =
     div [ class "images" ]
         [ div [ class "images-image_container" ]
             [ img [ src "img/manet.jpg", class "images-original_image_container-image" ] [] ]
-        , div [ class "images-image_container" ]
+        , div [ class "images-image_container images-image_container--hoverable" ]
             [ div
-                [ class "images-image_container-peeking_number images-image_container-peeking_number--top" ]
+                [ class "images-image_container-peeking_number" ]
                 [ text <| displayablePercentage model.fittestFitness ]
             , div
                 [ styleUploadedImageSize ]
                 [ drawCandidate model.fittest ]
+            , graphList model.fittestFitnessHistory
             ]
         , div
             [ Html.Events.onClick GenerateFirstCandidate
-            , class "images-image_container images-image_container--clickable"
+            , class "images-image_container images-image_container--hoverable"
             ]
             [ div
-                [ class "images-image_container-peeking_number images-image_container-peeking_number--top" ]
+                [ class "images-image_container-peeking_number" ]
                 [ text <| displayablePercentage model.candidateFitness ]
             , div
                 [ class "images-image_container-generated_image_canvas"
@@ -294,8 +325,9 @@ view model =
                 ]
                 [ drawCandidate model.candidate ]
             , div
-                [ class "images-image_container-peeking_number images-image_container-peeking_number--bottom" ]
+                [ class "images-image_container-overlay_text" ]
                 [ text <| toString model.iterations ]
+            , graphList model.candidateFitnessHistory
             ]
         ]
 
