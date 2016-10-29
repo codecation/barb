@@ -83,7 +83,7 @@ randomPolygon =
 
 randomColor : Random.Generator Color.Color
 randomColor =
-    Random.map3 Color.rgb (Random.int 40 200) (Random.int 40 200) (Random.int 40 200)
+    Random.map3 Color.rgb (Random.int 10 240) (Random.int 10 240) (Random.int 10 240)
 
 
 maybeMutateColor : Color.Color -> Random.Generator Color.Color
@@ -118,7 +118,8 @@ sometimesMutate : Polygon -> Random.Generator Polygon
 sometimesMutate polygon =
     Random.Extra.frequency
         [ ( 90.0, Random.Extra.constant polygon )
-        , ( 10.0, mutatePolygon polygon )
+        , ( 9.0, mutatePolygon polygon )
+        , ( 1.0, randomPolygon )
         ]
 
 
