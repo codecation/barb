@@ -110,11 +110,6 @@ checkFitness ( uploadedImage, candidateImage ) =
         1 - (sumOfSquares / toFloat (maximumDifference))
 
 
--- mutate : Image -> Image
--- mutate image =
-
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
