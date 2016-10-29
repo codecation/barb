@@ -85,7 +85,7 @@ type Msg
     = NoOp
     | Start
     | GenerateFirstImage Image
-    | ReceiveImageData ( List Int, List Int )
+    | CalculateFitness ( List Int, List Int )
     | RequestImageData
     | GenerateNewCandidate
     | UpdateCandidate Image
@@ -119,7 +119,7 @@ checkFitness ( uploadedImage, candidateImage ) =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log "msg" msg of
+    case msg of
         NoOp ->
             ( model, Cmd.none )
 
@@ -129,13 +129,13 @@ update msg model =
         GenerateFirstImage image ->
             ( { model | fittest = image, candidate = image }, Cmd.none )
 
-        ReceiveImageData rgbValues ->
+        CalculateFitness imageDataForBothImages ->
             let
                 candidateFitness =
-                    checkFitness rgbValues
+                    checkFitness imageDataForBothImages
             in
                 if candidateFitness > model.fittestFitness then
-                    ( { model | fittest = model.candidate, fittestFitness = candidateFitness, iterations = model.iterations + 1 }, Cmd.none )
+                    ( { model | fittest = model.candidate, fittestFitness = candidateFitness, iterations = model.iterations + 1, candidateFitness = candidateFitness }, Cmd.none )
                 else
                     ( { model | candidateFitness = candidateFitness, iterations = model.iterations + 1 }, Cmd.none )
 
@@ -187,7 +187,7 @@ view model =
         , div [ class "debug_area" ]
             [ button [ Html.Events.onClick Start ] [ text "Start" ]
             , button [ Html.Events.onClick RequestImageData ] [ text "Calculate Fitness" ]
-            , button [ Html.Events.onClick GenerateNewCandidate ] [ text "GenerateNewCandidate" ]
+            , button [ Html.Events.onClick GenerateNewCandidate ] [ text "Generate New Candidate" ]
             , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
             , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
             , div [] [ text <| "iterations: " ++ toString model.iterations ]
@@ -217,7 +217,7 @@ drawCircle circle =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    imageDetails ReceiveImageData
+    imageDetails CalculateFitness
 
 
 main : Program Never
