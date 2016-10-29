@@ -62,10 +62,7 @@ type alias Model =
 
 type alias Polygon =
     { vertices : List ( Float, Float )
-    , color :
-        Color
-        -- todo: combine color and alpha to rgba
-    , alpha : Float
+    , color : Color
     }
 
 
@@ -86,7 +83,7 @@ init =
 
 randomPolygon : Generator Polygon
 randomPolygon =
-    Random.map3
+    Random.map2
         Polygon
         (Random.list
             3
@@ -96,7 +93,6 @@ randomPolygon =
             )
         )
         Random.Color.rgba
-        (Random.float minimumAlpha maximumAlpha)
 
 
 maybeMutateColor : Color -> Generator Color
@@ -120,11 +116,10 @@ maybeMutateAlpha alpha =
 
 mutatePolygon : Polygon -> Generator Polygon
 mutatePolygon polygon =
-    Random.map3
+    Random.map2
         Polygon
         (maybeMutateVertices polygon.vertices)
         (maybeMutateColor polygon.color)
-        (maybeMutateAlpha polygon.alpha)
 
 
 sometimesMutate : Polygon -> Generator Polygon
@@ -341,7 +336,6 @@ drawPolygon : Polygon -> Collage.Form
 drawPolygon polygon =
     Collage.polygon polygon.vertices
         |> Collage.filled polygon.color
-        |> Collage.alpha polygon.alpha
 
 
 
