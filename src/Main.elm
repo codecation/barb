@@ -286,17 +286,7 @@ view : Model -> Html Msg
 view model =
     div [ class "images" ]
         [ div [ class "images-image_container images-image_container--hoverable" ]
-            [ img [ src "img/albers.jpg", class "images-original_image_container-image" ] [] ]
-        , div [ class "images-image_container images-image_container--hoverable" ]
-            [ div
-                [ class "images-image_container-peeking_number" ]
-                [ text <| displayablePercentage model.fittestFitness ]
-            , div
-                [ applyUploadedImageSize
-                , class "images-image_container-force_size_fill"
-                ]
-                [ drawCandidate model.fittest ]
-            ]
+            [ img [ src "img/mona.jpg", class "images-original_image_container-image" ] [] ]
         , div
             [ Html.Events.onClick Start
             , class "images-image_container images-image_container--hoverable"
