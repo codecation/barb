@@ -33,10 +33,10 @@ minimumAlpha =
 
 
 type alias Model =
-    { fittest : Image
+    { fittest : List Polygon
     , fittestFitness : Float
     , fittestFitnessHistory : List Float
-    , candidate : Image
+    , candidate : List Polygon
     , candidateFitness : Float
     , candidateFitnessHistory : List Float
     , iterations : Int
@@ -51,10 +51,6 @@ type alias Polygon =
         -- todo: combine color and alpha to rgba
     , alpha : Float
     }
-
-
-type alias Image =
-    List Polygon
 
 
 init : ( Model, Cmd Msg )
@@ -140,8 +136,8 @@ sometimesMutateVertex ( x, y ) =
         ]
 
 
-mutateImage : List Polygon -> Random.Generator (List Polygon)
-mutateImage polygons =
+mutatePolygons : List Polygon -> Random.Generator (List Polygon)
+mutatePolygons polygons =
     let
         listOfGenerators =
             List.map sometimesMutate polygons
@@ -184,7 +180,7 @@ type Msg
     | RequestImageData
     | GenerateFirstCandidate
     | MutateCandidate
-    | UpdateCandidate Image
+    | UpdateCandidate (List Polygon)
     | Sleep
 
 
@@ -223,7 +219,7 @@ update msg model =
             ( model, Random.generate UpdateCandidate (Random.list numberOfPolygons randomPolygon) )
 
         MutateCandidate ->
-            ( model, Random.generate UpdateCandidate (mutateImage model.candidate) )
+            ( model, Random.generate UpdateCandidate (mutatePolygons model.candidate) )
 
         UpdateCandidate image ->
             update Sleep { model | candidate = image }
@@ -316,7 +312,7 @@ view model =
         ]
 
 
-drawCandidate : Image -> Html Msg
+drawCandidate : List Polygon -> Html Msg
 drawCandidate image =
     Collage.collage 100
         100
