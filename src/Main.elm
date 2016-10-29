@@ -103,17 +103,6 @@ maybeMutateColor color =
         ]
 
 
-maybeMutateAlpha : Float -> Generator Float
-maybeMutateAlpha alpha =
-    Random.Extra.frequency
-        [ ( 90.0, Random.Extra.constant alpha )
-        , ( 10.0
-          , (Random.float -80.0 80.0)
-                `Random.andThen` \f -> Random.Extra.constant (clamp minimumAlpha maximumAlpha (f + alpha))
-          )
-        ]
-
-
 mutatePolygon : Polygon -> Generator Polygon
 mutatePolygon polygon =
     Random.map2
