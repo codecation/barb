@@ -118,21 +118,19 @@ update msg model =
                     checkFitness imageDataForBothImages
             in
                 if newCandidateFitness > model.fittestFitness then
-                    ( { model
-                        | fittest = model.candidate
-                        , fittestFitness = newCandidateFitness
-                        , iterations = model.iterations + 1
-                        , candidateFitness = newCandidateFitness
-                      }
-                    , Cmd.none
-                    )
+                    update GenerateNewCandidate
+                        { model
+                            | fittest = model.candidate
+                            , fittestFitness = newCandidateFitness
+                            , iterations = model.iterations + 1
+                            , candidateFitness = newCandidateFitness
+                        }
                 else
-                    ( { model
-                        | candidateFitness = newCandidateFitness
-                        , iterations = model.iterations + 1
-                      }
-                    , Cmd.none
-                    )
+                    update GenerateNewCandidate
+                        { model
+                            | candidateFitness = newCandidateFitness
+                            , iterations = model.iterations + 1
+                        }
 
         RequestImageData ->
             ( model, requestImageDetails "" )
@@ -180,8 +178,8 @@ view model =
                 [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
-            [ button [ Html.Events.onClick GenerateNewCandidate ] [ text "Generate New Candidate" ]
-            , button [ Html.Events.onClick RequestImageData ] [ text "Calculate Fitness" ]
+            [ button [ Html.Events.onClick GenerateNewCandidate ] [ text "Seed" ]
+            , button [ Html.Events.onClick RequestImageData ] [ text "Iterate" ]
             , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
             , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
             , div [] [ text <| "iterations: " ++ toString model.iterations ]
