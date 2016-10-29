@@ -9,6 +9,8 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Random
 import Random.Extra
+import Task
+import Process
 import Exts.Float
 
 
@@ -138,6 +140,7 @@ type Msg
     | GenerateFirstCandidate
     | MutateCandidate
     | UpdateCandidate Image
+    | Sleep
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -174,7 +177,11 @@ update msg model =
             ( model, Random.generate UpdateCandidate (generateListWithRandomlyReplaceCircles model.candidate) )
 
         UpdateCandidate image ->
-            ( { model | candidate = image }, Cmd.none )
+            update Sleep { model | candidate = image }
+
+        Sleep ->
+            ( model, Task.perform (always RequestImageData) (always RequestImageData) (Process.sleep 0) )
+
 
 
 
@@ -183,12 +190,12 @@ update msg model =
 
 imageWidth : String
 imageWidth =
-    "300px"
+    "100px"
 
 
 imageHeight : String
 imageHeight =
-    "300px"
+    "100px"
 
 
 styleUploadedImageSize : Attribute msg
@@ -236,8 +243,8 @@ view model =
 
 drawCandidate : Image -> Html Msg
 drawCandidate circles =
-    Collage.collage 300
-        300
+    Collage.collage 100
+        100
         (List.map drawCircle circles)
         |> Element.toHtml
 
