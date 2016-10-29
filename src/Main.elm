@@ -79,6 +79,13 @@ randomCircle =
         (Random.float 0 maximumAlpha)
 
 
+randomizeOnlySomeCircles : (List Circle) -> Random.Generator (List Circle)
+randomizeOnlySomeCircles circles =
+    Random.list
+      (List.length circles)
+      randomCircle
+
+
 randomColor : Random.Generator Color.Color
 randomColor =
     Random.map3 Color.rgb (Random.int 0 255) (Random.int 0 255) (Random.int 0 255)
@@ -112,27 +119,21 @@ checkFitness ( uploadedImage, candidateImage ) =
 type Msg
     = CalculateFitness ( List Int, List Int )
     | RequestImageData
-    | Start
-    | GenerateNewCandidate
+    | GenerateFirstCandidate
+    | MutateCandidate
     | UpdateCandidate Image
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Start ->
-            -- update
-            --     GenerateNewCandidate
-            -- { model |
-            ( model, Cmd.none )
-
         CalculateFitness imageDataForBothImages ->
             let
                 newCandidateFitness =
                     checkFitness imageDataForBothImages
             in
                 if newCandidateFitness > model.fittestFitness then
-                    update GenerateNewCandidate
+                    update MutateCandidate
                         { model
                             | fittest = model.candidate
                             , fittestFitness = newCandidateFitness
@@ -140,7 +141,7 @@ update msg model =
                             , candidateFitness = newCandidateFitness
                         }
                 else
-                    update GenerateNewCandidate
+                    update MutateCandidate
                         { model
                             | candidateFitness = newCandidateFitness
                             , iterations = model.iterations + 1
@@ -149,8 +150,11 @@ update msg model =
         RequestImageData ->
             ( model, requestImageDetails "" )
 
-        GenerateNewCandidate ->
+        GenerateFirstCandidate ->
             ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
+
+        MutateCandidate ->
+            ( model, Random.generate UpdateCandidate (randomizeOnlySomeCircles model.candidate))
 
         UpdateCandidate image ->
             ( { model | candidate = image }, Cmd.none )
@@ -192,7 +196,7 @@ view model =
                 [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
-            [ button [ Html.Events.onClick Start ] [ text "Start" ]
+            [ button [ Html.Events.onClick GenerateFirstCandidate ] [ text "Seed" ]
             , button [ Html.Events.onClick RequestImageData ] [ text "Iterate" ]
             , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
             , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
