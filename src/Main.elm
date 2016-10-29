@@ -68,18 +68,43 @@ init =
     )
 
 
+maximumVertexDisplacement : Float
+maximumVertexDisplacement =
+    50
+
+
+minimumRGBValue : Int
+minimumRGBValue =
+    10
+
+
+maximumRGBValue : Int
+maximumRGBValue =
+    240
+
+
 randomPolygon : Random.Generator Polygon
 randomPolygon =
     Random.map3
         Polygon
-        (Random.list 3 (Random.pair (Random.float -50 50) (Random.float -50 50)))
+        (Random.list
+            3
+            (Random.pair
+                (Random.float -maximumVertexDisplacement maximumVertexDisplacement)
+                (Random.float -maximumVertexDisplacement maximumVertexDisplacement)
+            )
+        )
         randomColor
         (Random.float minimumAlpha maximumAlpha)
 
 
 randomColor : Random.Generator Color.Color
 randomColor =
-    Random.map3 Color.rgb (Random.int 10 240) (Random.int 10 240) (Random.int 10 240)
+    Random.map3
+        Color.rgb
+        (Random.int minimumRGBValue maximumRGBValue)
+        (Random.int minimumRGBValue maximumRGBValue)
+        (Random.int minimumRGBValue maximumRGBValue)
 
 
 maybeMutateColor : Color.Color -> Random.Generator Color.Color
