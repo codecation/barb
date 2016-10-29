@@ -34,6 +34,11 @@ body {
     .images-image_container-peeking_number {
       transform: translateY(-.92em) scale(1);
     }
+
+    .graph,
+    .images-image_container-overlay_text {
+      opacity: 0;
+    }
   }
 }
 
@@ -60,6 +65,7 @@ body {
   text-align: center;
   top: 50%;
   transform: translateY(-50%);
+  transition: opacity .5s ease;
   width: 100%;
   z-index: 1;
 }
@@ -70,6 +76,7 @@ body {
   display: flex;
   height: 40%;
   position: absolute;
+  transition: opacity .5s ease;
   width: 100%;
   z-index: 1;
 }
