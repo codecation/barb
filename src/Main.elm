@@ -82,8 +82,7 @@ randomColor =
 
 
 type Msg
-    = NoOp
-    | CalculateFitness ( List Int, List Int )
+    = CalculateFitness ( List Int, List Int )
     | RequestImageData
     | GenerateNewCandidate
     | UpdateCandidate Image
@@ -113,9 +112,6 @@ checkFitness ( uploadedImage, candidateImage ) =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
-
         CalculateFitness imageDataForBothImages ->
             let
                 candidateFitness =
