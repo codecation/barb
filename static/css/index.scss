@@ -101,6 +101,18 @@ body {
   height: 100%;
   position: relative;
 
+  &:nth-child(8) {
+    transition: transform .1s ease;
+  }
+
+  &:nth-child(9) {
+    transition: transform .2s ease;
+  }
+
+  &:nth-child(10) {
+    transition: transform .3s ease;
+  }
+
   &:nth-child(even) {
     background: rgba(255, 255, 255, .35);
   }
