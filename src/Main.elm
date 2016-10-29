@@ -26,6 +26,8 @@ type alias Model =
     , candidateFitnessHistory : List Float
     , iterations : Int
     , imageDataForUploadedImage : List Int
+    , imageHeight : Int
+    , imageWidth : Int
     }
 
 
@@ -74,6 +76,8 @@ init =
       , candidateFitnessHistory = List.repeat 25 0.0
       , iterations = 0
       , imageDataForUploadedImage = []
+      , imageHeight = 0
+      , imageWidth = 0
       }
     , Cmd.none
     )
@@ -191,7 +195,11 @@ update msg model =
             ( model, requestUploadedImage "" )
 
         StoreUploadedImage image ->
-            ( { model | imageDataForUploadedImage = image }
+            ( { model
+                | imageDataForUploadedImage = image
+                , imageHeight = 100
+                , imageWidth = 100
+              }
             , Random.generate UpdateCandidate (Random.list numberOfPolygons randomPolygon)
             )
 
@@ -235,21 +243,11 @@ update msg model =
 -- VIEW
 
 
-imageWidth : Int
-imageWidth =
-    100
-
-
-imageHeight : Int
-imageHeight =
-    100
-
-
-applyUploadedImageSize : Attribute msg
-applyUploadedImageSize =
+applyUploadedImageSize : Model -> Attribute msg
+applyUploadedImageSize model =
     style
-        [ ( "width", (toString imageWidth) ++ "px" )
-        , ( "height", (toString imageHeight) ++ "px" )
+        [ ( "width", (toString model.imageWidth) ++ "px" )
+        , ( "height", (toString model.imageHeight) ++ "px" )
         ]
 
 
@@ -285,20 +283,21 @@ graphList fitnessHistory =
 view : Model -> Html Msg
 view model =
     div [ class "images" ]
-        [ div [ class "images-image_container images-image_container--hoverable" ]
+        [ div
+            [ class "images-image_container images-image_container--hoverable"
+            , Html.Events.onClick Start
+            ]
             [ img [ src "img/bluered.jpg", class "images-original_image_container-image" ] [] ]
         , div
-            [ Html.Events.onClick Start
-            , class "images-image_container images-image_container--hoverable"
-            ]
+            [ class "images-image_container images-image_container--hoverable" ]
             [ div
                 [ class "images-image_container-peeking_number" ]
                 [ text <| displayablePercentage model.fittestFitness ]
             , div
-                [ applyUploadedImageSize
+                [ applyUploadedImageSize model
                 , class "images-image_container-generated_image_canvas class images-image_container-force_size_fill"
                 ]
-                [ drawCandidate model.candidate ]
+                [ drawCandidate model ]
             , div
                 [ class "images-image_container-overlay_text" ]
                 [ text <| toString model.iterations ]
@@ -306,12 +305,12 @@ view model =
         ]
 
 
-drawCandidate : List Polygon -> Html Msg
-drawCandidate image =
+drawCandidate : Model -> Html Msg
+drawCandidate model =
     Collage.collage
-        (round ((toFloat imageWidth) / 2))
-        (round ((toFloat imageHeight) / 2))
-        (List.map drawPolygon image)
+        (round ((toFloat model.imageWidth) / 2))
+        (round ((toFloat model.imageHeight) / 2))
+        (List.map drawPolygon model.candidate)
         |> Element.toHtml
 
 
