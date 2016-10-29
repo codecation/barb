@@ -19,7 +19,7 @@ import Exts.Float
 
 numberOfCircles : Int
 numberOfCircles =
-    75
+    150
 
 
 minimumRadiusLength : Float
@@ -34,12 +34,12 @@ maximumRadiusLength =
 
 maximumAlpha : Float
 maximumAlpha =
-    1.0
+    0.7
 
 
 minimumAlpha : Float
 minimumAlpha =
-    0
+    0.1
 
 
 type alias Model =
@@ -87,19 +87,82 @@ randomCircle =
         (Random.float minimumAlpha maximumAlpha)
 
 
-sometimesReplace : Circle -> Random.Generator Circle
-sometimesReplace circle =
+maybeMutateCenter : ( Float, Float ) -> Random.Generator ( Float, Float )
+maybeMutateCenter ( x, y ) =
     Random.Extra.frequency
-        [ ( 90.0, Random.Extra.constant circle )
+        [ ( 90.0, Random.Extra.constant ( x, y ) )
+        , ( 10.0
+          , (Random.float -20.0 20.0)
+                `Random.andThen` \f -> Random.Extra.constant ( (f + x), (f + y) )
+          )
+        ]
+
+
+maybeMutateRGBValue : Int -> Random.Generator Int
+maybeMutateRGBValue int =
+    Random.Extra.frequency
+        [ ( 90.0, Random.Extra.constant int )
+        , ( 10.0
+          , (Random.int -255 255)
+                `Random.andThen` \i -> Random.Extra.constant (clamp 0 255 (i + int))
+          )
+        ]
+
+
+maybeMutateColor : Color.Color -> Random.Generator Color.Color
+maybeMutateColor color =
+    Random.Extra.frequency
+        [ ( 90.0, Random.Extra.constant color )
+        , ( 10.0, randomColor )
+        ]
+
+
+maybeMutateAlpha : Float -> Random.Generator Float
+maybeMutateAlpha alpha =
+    Random.Extra.frequency
+        [ ( 90.0, Random.Extra.constant alpha )
+        , ( 10.0
+          , (Random.float -80.0 80.0)
+                `Random.andThen` \f -> Random.Extra.constant (clamp minimumAlpha maximumAlpha (f + alpha))
+          )
+        ]
+
+
+maybeMutateRadius : Float -> Random.Generator Float
+maybeMutateRadius radius =
+    Random.Extra.frequency
+        [ ( 90.0, Random.Extra.constant radius )
+        , ( 10.0
+          , (Random.float -40.0 40.0)
+                `Random.andThen` \f -> Random.Extra.constant (clamp minimumRadiusLength maximumRadiusLength (f + radius))
+          )
+        ]
+
+
+mutateCircle : Circle -> Random.Generator Circle
+mutateCircle circle =
+    Random.map4
+        Circle
+        (maybeMutateCenter circle.center)
+        (maybeMutateRadius circle.radius)
+        (maybeMutateColor circle.color)
+        (maybeMutateAlpha circle.alpha)
+
+
+sometimesMutate : Circle -> Random.Generator Circle
+sometimesMutate circle =
+    Random.Extra.frequency
+        [ ( 80.0, Random.Extra.constant circle )
+        , ( 10.0, mutateCircle circle )
         , ( 10.0, randomCircle )
         ]
 
 
-generateListWithRandomlyReplaceCircles : Image -> Random.Generator Image
-generateListWithRandomlyReplaceCircles listOfCircles =
+mutateImage : List Circle -> Random.Generator (List Circle)
+mutateImage listOfCircles =
     let
         listOfGenerators =
-            List.map sometimesReplace listOfCircles
+            List.map sometimesMutate listOfCircles
     in
         Random.Extra.together listOfGenerators
 
@@ -174,7 +237,7 @@ update msg model =
             ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
 
         MutateCandidate ->
-            ( model, Random.generate UpdateCandidate (generateListWithRandomlyReplaceCircles model.candidate) )
+            ( model, Random.generate UpdateCandidate (mutateImage model.candidate) )
 
         UpdateCandidate image ->
             update Sleep { model | candidate = image }
