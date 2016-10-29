@@ -80,17 +80,27 @@ randomCircle =
         (Random.float 0 maximumAlpha)
 
 
-sometimesRandomCircle : Circle -> Random.Generator Circle
-sometimesRandomCircle circle =
-      let
-          circle' = Random.Extra.constant circle
-      in
-          Random.bool `Random.andThen` \b -> if b then circle' else randomCircle
+
+-- Random.map     : (a -> b) -> Generator a -> Generator b
+-- Random.list    : Int -> Generator a -> Generator (List a)
+-- Random.andThen : Generator a -> (a -> Generator b) -> Generator b
 
 
--- randomizeOnlySomeCircles : (List Circle) -> Random.Generator (List Circle)
--- randomizeOnlySomeCircles circles =
---     Random.list (List.length circles) sometimesRandomCircle cir
+sometimesReplace : Circle -> Random.Generator Circle
+sometimesReplace circle =
+    Random.Extra.choices
+        [ Random.Extra.constant circle
+        , randomCircle
+        ]
+
+
+generateListWithRandomlyReplaceCircles : List Circle -> Random.Generator (List Circle)
+generateListWithRandomlyReplaceCircles listOfCircles =
+    let
+        listOfGenerators =
+            List.map sometimesReplace listOfCircles
+    in
+        Random.Extra.together listOfGenerators
 
 
 randomColor : Random.Generator Color.Color
@@ -161,8 +171,7 @@ update msg model =
             ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
 
         MutateCandidate ->
-            -- ( model, Random.generate UpdateCandidate (randomizeOnlySomeCircles model.candidate))
-            ( model, Cmd.none)
+            ( model, Random.generate UpdateCandidate (generateListWithRandomlyReplaceCircles model.candidate) )
 
         UpdateCandidate image ->
             ( { model | candidate = image }, Cmd.none )
