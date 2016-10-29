@@ -17,7 +17,7 @@ import Exts.Float
 
 numberOfCircles : Int
 numberOfCircles =
-    200
+    600
 
 
 minimumRadiusLength : Float
@@ -32,7 +32,12 @@ maximumRadiusLength =
 
 maximumAlpha : Float
 maximumAlpha =
-    0.85
+    1.0
+
+
+minimumAlpha : Float
+minimumAlpha =
+    0.2
 
 
 type alias Model =
@@ -77,7 +82,7 @@ randomCircle =
         (Random.pair (Random.float -200 200) (Random.float -200 200))
         (Random.float minimumRadiusLength maximumRadiusLength)
         randomColor
-        (Random.float 0 maximumAlpha)
+        (Random.float minimumAlpha maximumAlpha)
 
 
 
@@ -88,9 +93,9 @@ randomCircle =
 
 sometimesReplace : Circle -> Random.Generator Circle
 sometimesReplace circle =
-    Random.Extra.choices
-        [ Random.Extra.constant circle
-        , randomCircle
+    Random.Extra.frequency
+        [ ( 90.0, Random.Extra.constant circle )
+        , ( 10.0, randomCircle )
         ]
 
 
@@ -161,6 +166,7 @@ update msg model =
                     update MutateCandidate
                         { model
                             | candidateFitness = newCandidateFitness
+                            , candidate = model.fittest
                             , iterations = model.iterations + 1
                         }
 
