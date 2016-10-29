@@ -46,9 +46,13 @@ body {
   font-weight: 900;
   position: absolute;
   text-align: center;
-  top: -.92em;
   width: 100%;
+  z-index: -1;
 }
+
+.images-image_container-peeking_number--top { top: -.92em; }
+
+.images-image_container-peeking_number--bottom { bottom: -.92em; }
 
 .debug_area {
   font-feature-settings: "tnum";

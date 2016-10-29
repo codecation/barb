@@ -9,6 +9,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Random
 import Random.Extra
+import Exts.Float
 
 
 -- MODEL
@@ -192,13 +193,9 @@ styleUploadedImageSize =
 displayablePercentage : Float -> String
 displayablePercentage number =
     let
-        rounded =
-            round (number * 10000)
-
-        toTwoDecimals =
-            (toFloat rounded) * 0.01
+        rounded = Exts.Float.roundTo 2 (number * 100)
     in
-        (toString toTwoDecimals) ++ "%"
+        (toString rounded) ++ "%"
 
 
 view : Model -> Html Msg
@@ -207,21 +204,22 @@ view model =
         [ div [ class "images-image_container" ]
             [ img [ src "img/manet.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container" ]
-            [ div [ class "images-image_container-peeking_number" ]
+            [ div [ class "images-image_container-peeking_number images-image_container-peeking_number--top" ]
                 [ text <| displayablePercentage model.fittestFitness ]
             , div [ styleUploadedImageSize ]
                 [ drawCandidate model.fittest ]
             ]
         , div [ class "images-image_container" ]
-            [ div [ class "images-image_container-peeking_number" ]
+            [ div [ class "images-image_container-peeking_number images-image_container-peeking_number--top" ]
                 [ text <| displayablePercentage model.candidateFitness ]
             , div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
                 [ drawCandidate model.candidate ]
+            , div [ class "images-image_container-peeking_number images-image_container-peeking_number--bottom" ]
+                [ text <| toString model.iterations ]
             ]
         , div [ class "debug_area" ]
             [ button [ Html.Events.onClick GenerateFirstCandidate ] [ text "Seed" ]
             , button [ Html.Events.onClick RequestImageData ] [ text "Iterate" ]
-            , div [] [ text <| "iterations: " ++ toString model.iterations ]
             ]
         ]
 
