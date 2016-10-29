@@ -180,7 +180,7 @@ view model =
             [ div [ styleUploadedImageSize ]
                 [ drawCandidate model.fittest ]
             ]
-        , div [ class "images-image_container images-image_container--clickable" ]
+        , div [ class "images-image_container" ]
             [ div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
                 [ drawCandidate model.candidate ]
             ]
