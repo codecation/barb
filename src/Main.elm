@@ -21,7 +21,6 @@ import Exts.Float
 type alias Model =
     { fittest : List Polygon
     , fittestFitness : Float
-    , fittestFitnessHistory : List Float
     , candidate : List Polygon
     , candidateFitness : Float
     , candidateFitnessHistory : List Float
@@ -70,7 +69,6 @@ init : ( Model, Cmd Msg )
 init =
     ( { fittest = []
       , fittestFitness = 0.0
-      , fittestFitnessHistory = List.repeat 25 0.0
       , candidate = []
       , candidateFitness = 0.0
       , candidateFitnessHistory = List.repeat 25 0.0
@@ -216,8 +214,6 @@ update msg model =
                         { model
                             | fittest = model.candidate
                             , fittestFitness = newCandidateFitness
-                            , fittestFitnessHistory =
-                                shiftList model.fittestFitnessHistory (exaggeratePercentage newCandidateFitness)
                             , iterations = model.iterations + 1
                             , candidateFitness = newCandidateFitness
                         }
@@ -300,7 +296,6 @@ view model =
                 , class "images-image_container-force_size_fill"
                 ]
                 [ drawCandidate model.fittest ]
-            , graphList model.fittestFitnessHistory
             ]
         , div
             [ Html.Events.onClick Start
