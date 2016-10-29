@@ -38,17 +38,17 @@ type alias Polygon =
 
 numberOfPolygons : Int
 numberOfPolygons =
-    125
+    50
 
 
 maximumAlpha : Float
 maximumAlpha =
-    0.9
+    1.0
 
 
 minimumAlpha : Float
 minimumAlpha =
-    0.1
+    0.5
 
 
 maximumVertexDisplacement : Float
@@ -58,12 +58,12 @@ maximumVertexDisplacement =
 
 minimumRGBValue : Int
 minimumRGBValue =
-    10
+    0
 
 
 maximumRGBValue : Int
 maximumRGBValue =
-    240
+    255
 
 
 init : ( Model, Cmd Msg )
@@ -301,7 +301,7 @@ view : Model -> Html Msg
 view model =
     div [ class "images" ]
         [ div [ class "images-image_container images-image_container--hoverable" ]
-            [ img [ src "img/mona.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/albers.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container images-image_container--hoverable" ]
             [ div
                 [ class "images-image_container-peeking_number" ]
