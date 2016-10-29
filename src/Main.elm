@@ -11,14 +11,6 @@ import Html.Events exposing (..)
 import Random
 
 
--- Algorithm
--- Start: generate a random DNA sequence.
--- 1. Copy the current DNA sequence and mutate it slightly
--- 2. Use the new DNA to render polygons onto a canvas
--- 3. Compare the canvas to the source image
--- 4. If the new image looks more like the source image than the previous
---    image did, then overwrite the current DNA with the new DNA
--- 5. Repeat
 -- MODEL
 
 
@@ -135,7 +127,7 @@ update msg model =
             ( model, Random.generate GenerateFirstImage (Random.list numberOfCircles randomCircle) )
 
         GenerateFirstImage image ->
-            ( { model | fittest = image, fittestFitness = 0, candidate = image }, Cmd.none )
+            ( { model | fittest = image, candidate = image }, Cmd.none )
 
         ReceiveImageData rgbValues ->
             let
@@ -143,11 +135,7 @@ update msg model =
                     checkFitness rgbValues
             in
                 if candidateFitness > model.fittestFitness then
-                    let
-                        newModel =
-                          { model | fittest = model.candidate, fittestFitness = candidateFitness, iterations = model.iterations + 1 }
-                    in
-                        ( newModel, Cmd.none )
+                    ( { model | fittest = model.candidate, fittestFitness = candidateFitness, iterations = model.iterations + 1 }, Cmd.none )
                 else
                     ( { model | candidateFitness = candidateFitness, iterations = model.iterations + 1 }, Cmd.none )
 
@@ -189,15 +177,16 @@ view model =
         [ div [ class "images-image_container" ]
             [ img [ src "img/manet.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container" ]
-            [ div [ styleUploadedImageSize, Html.Events.onClick Start ]
+            [ div [ styleUploadedImageSize ]
                 [ drawCandidate model.fittest ]
             ]
         , div [ class "images-image_container images-image_container--clickable" ]
-            [ div [ styleUploadedImageSize, Html.Events.onClick Start, class "images-image_container-generated_image_canvas" ]
+            [ div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
                 [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
-            [ button [ Html.Events.onClick RequestImageData ] [ text "RequestImageData" ]
+            [ button [ Html.Events.onClick Start ] [ text "Start" ]
+            , button [ Html.Events.onClick RequestImageData ] [ text "Calculate Fitness" ]
             , button [ Html.Events.onClick GenerateNewCandidate ] [ text "GenerateNewCandidate" ]
             , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
             , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
