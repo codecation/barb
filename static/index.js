@@ -18,7 +18,7 @@ var getUploadedImageData = function() {
 }
 
 var getGeneratedImageData = function() {
-  var canvas = document.getElementsByTagName('canvas')[0];
+  var canvas = document.getElementsByClassName('images-image_container-generated_image_canvas')[0].childNodes[0].childNodes[0];
   return canvas.getContext('2d').getImageData(0, 0, 300, 300).data;
 };
 
