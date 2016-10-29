@@ -184,7 +184,6 @@ update msg model =
 
 
 
-
 -- VIEW
 
 
@@ -221,17 +220,27 @@ view model =
         [ div [ class "images-image_container" ]
             [ img [ src "img/manet.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container" ]
-            [ div [ class "images-image_container-peeking_number images-image_container-peeking_number--top" ]
+            [ div
+                [ class "images-image_container-peeking_number images-image_container-peeking_number--top" ]
                 [ text <| displayablePercentage model.fittestFitness ]
-            , div [ styleUploadedImageSize ]
+            , div
+                [ styleUploadedImageSize ]
                 [ drawCandidate model.fittest ]
             ]
-        , div [ Html.Events.onClick GenerateFirstCandidate, class "images-image_container images-image_container--clickable" ]
-            [ div [ class "images-image_container-peeking_number images-image_container-peeking_number--top" ]
+        , div
+            [ Html.Events.onClick GenerateFirstCandidate
+            , class "images-image_container images-image_container--clickable"
+            ]
+            [ div
+                [ class "images-image_container-peeking_number images-image_container-peeking_number--top" ]
                 [ text <| displayablePercentage model.candidateFitness ]
-            , div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
+            , div
+                [ class "images-image_container-generated_image_canvas"
+                , styleUploadedImageSize
+                ]
                 [ drawCandidate model.candidate ]
-            , div [ class "images-image_container-peeking_number images-image_container-peeking_number--bottom" ]
+            , div
+                [ class "images-image_container-peeking_number images-image_container-peeking_number--bottom" ]
                 [ text <| toString model.iterations ]
             ]
         ]
