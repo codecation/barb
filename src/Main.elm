@@ -19,17 +19,17 @@ import Exts.Float
 
 numberOfCircles : Int
 numberOfCircles =
-    400
+    75
 
 
 minimumRadiusLength : Float
 minimumRadiusLength =
-    1.0
+    5.0
 
 
 maximumRadiusLength : Float
 maximumRadiusLength =
-    40.0
+    80.0
 
 
 maximumAlpha : Float
@@ -39,7 +39,7 @@ maximumAlpha =
 
 minimumAlpha : Float
 minimumAlpha =
-    0.2
+    0
 
 
 type alias Model =
@@ -81,7 +81,7 @@ randomCircle : Random.Generator Circle
 randomCircle =
     Random.map4
         Circle
-        (Random.pair (Random.float -200 200) (Random.float -200 200))
+        (Random.pair (Random.float -50 50) (Random.float -50 50))
         (Random.float minimumRadiusLength maximumRadiusLength)
         randomColor
         (Random.float minimumAlpha maximumAlpha)
