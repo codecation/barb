@@ -83,7 +83,7 @@ randomPolygon =
 
 randomColor : Random.Generator Color.Color
 randomColor =
-    Random.map3 Color.rgb (Random.int 0 255) (Random.int 0 255) (Random.int 0 255)
+    Random.map3 Color.rgb (Random.int 40 200) (Random.int 40 200) (Random.int 40 200)
 
 
 maybeMutateColor : Color.Color -> Random.Generator Color.Color
