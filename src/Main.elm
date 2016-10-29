@@ -79,11 +79,17 @@ randomCircle =
         (Random.float 0 maximumAlpha)
 
 
+sometimesRandomCircle : Circle -> Random.Generator Circle
+sometimesRandomCircle circle =
+    if True then
+        circle
+    else
+        randomCircle
+
+
 randomizeOnlySomeCircles : (List Circle) -> Random.Generator (List Circle)
 randomizeOnlySomeCircles circles =
-    Random.list
-      (List.length circles)
-      randomCircle
+    Random.map Circle sometimesRandomCircle
 
 
 randomColor : Random.Generator Color.Color
