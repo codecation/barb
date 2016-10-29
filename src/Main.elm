@@ -295,7 +295,7 @@ view : Model -> Html Msg
 view model =
     div [ class "images" ]
         [ div [ class "images-image_container images-image_container--hoverable" ]
-            [ img [ src "img/bluered.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/mona.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container images-image_container--hoverable" ]
             [ div
                 [ class "images-image_container-peeking_number" ]
