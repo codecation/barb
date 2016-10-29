@@ -24,7 +24,7 @@ numberOfCircles =
 
 minimumRadiusLength : Float
 minimumRadiusLength =
-    5.0
+    1.0
 
 
 maximumRadiusLength : Float
