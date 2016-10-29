@@ -53,19 +53,3 @@ body {
 .images-image_container-peeking_number--top { top: -.92em; }
 
 .images-image_container-peeking_number--bottom { bottom: -.92em; }
-
-.debug_area {
-  font-feature-settings: "tnum";
-  position: absolute;
-  right: 0;
-  text-align: right;
-  top: 0;
-
-  button {
-    font-family: inherit;
-    font-size: 1rem;
-    padding: 1rem;
-  }
-
-  > * { margin: 1rem 1rem 0 0; }
-}
