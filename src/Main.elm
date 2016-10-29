@@ -42,12 +42,12 @@ numberOfPolygons =
 
 maximumAlpha : Float
 maximumAlpha =
-    1.0
+    0.9
 
 
 minimumAlpha : Float
 minimumAlpha =
-    0.5
+    0.2
 
 
 maximumVertexDisplacement : Float
@@ -57,12 +57,12 @@ maximumVertexDisplacement =
 
 minimumRGBValue : Int
 minimumRGBValue =
-    0
+    20
 
 
 maximumRGBValue : Int
 maximumRGBValue =
-    255
+    240
 
 
 init : ( Model, Cmd Msg )
@@ -96,8 +96,8 @@ randomPolygon =
 maybeMutateColor : Color -> Generator Color
 maybeMutateColor color =
     Random.Extra.frequency
-        [ ( 90.0, Random.Extra.constant color )
-        , ( 10.0, Random.Color.rgba )
+        [ ( 50.0, Random.Extra.constant color )
+        , ( 50.0, Random.Color.rgba )
         ]
 
 
@@ -130,8 +130,8 @@ maybeMutateVertices vertices =
 sometimesMutateVertex : ( Float, Float ) -> Generator ( Float, Float )
 sometimesMutateVertex ( x, y ) =
     Random.Extra.frequency
-        [ ( 90.0, Random.Extra.constant ( x, y ) )
-        , ( 10.0, (Random.float -30.0 30.0) `Random.andThen` \i -> Random.Extra.constant ( (i + x), (i + y) ) )
+        [ ( 50.0, Random.Extra.constant ( x, y ) )
+        , ( 50.0, (Random.float -30.0 30.0) `Random.andThen` \i -> Random.Extra.constant ( (i + x), (i + y) ) )
         ]
 
 
@@ -286,14 +286,14 @@ view : Model -> Html Msg
 view model =
     div [ class "images" ]
         [ div [ class "images-image_container images-image_container--hoverable" ]
-            [ img [ src "img/mona.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/bluered.jpg", class "images-original_image_container-image" ] [] ]
         , div
             [ Html.Events.onClick Start
             , class "images-image_container images-image_container--hoverable"
             ]
             [ div
                 [ class "images-image_container-peeking_number" ]
-                [ text <| displayablePercentage model.candidateFitness ]
+                [ text <| displayablePercentage model.fittestFitness ]
             , div
                 [ applyUploadedImageSize
                 , class "images-image_container-generated_image_canvas class images-image_container-force_size_fill"
@@ -302,7 +302,6 @@ view model =
             , div
                 [ class "images-image_container-overlay_text" ]
                 [ text <| toString model.iterations ]
-            , graphList model.candidateFitnessHistory
             ]
         ]
 
