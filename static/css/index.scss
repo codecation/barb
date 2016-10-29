@@ -42,6 +42,11 @@ body {
   }
 }
 
+.images-image_container-force_size_fill * {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .images-image_container-peeking_number {
   color: #cccccc;
   font-feature-settings: "tnum";

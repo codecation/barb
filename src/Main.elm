@@ -244,21 +244,21 @@ update msg model =
 -- VIEW
 
 
-imageWidth : String
+imageWidth : Int
 imageWidth =
-    "100px"
+    100
 
 
-imageHeight : String
+imageHeight : Int
 imageHeight =
-    "100px"
+    100
 
 
-styleUploadedImageSize : Attribute msg
-styleUploadedImageSize =
+applyUploadedImageSize : Attribute msg
+applyUploadedImageSize =
     style
-        [ ( "width", imageWidth )
-        , ( "height", imageHeight )
+        [ ( "width", (toString imageWidth) ++ "px" )
+        , ( "height", (toString imageHeight) ++ "px" )
         ]
 
 
@@ -300,7 +300,9 @@ view model =
                 [ class "images-image_container-peeking_number" ]
                 [ text <| displayablePercentage model.fittestFitness ]
             , div
-                [ styleUploadedImageSize ]
+                [ applyUploadedImageSize
+                , class "images-image_container-force_size_fill"
+                ]
                 [ drawCandidate model.fittest ]
             , graphList model.fittestFitnessHistory
             ]
@@ -312,8 +314,8 @@ view model =
                 [ class "images-image_container-peeking_number" ]
                 [ text <| displayablePercentage model.candidateFitness ]
             , div
-                [ class "images-image_container-generated_image_canvas"
-                , styleUploadedImageSize
+                [ applyUploadedImageSize
+                , class "images-image_container-generated_image_canvas class images-image_container-force_size_fill"
                 ]
                 [ drawCandidate model.candidate ]
             , div
@@ -326,8 +328,9 @@ view model =
 
 drawCandidate : List Polygon -> Html Msg
 drawCandidate image =
-    Collage.collage 100
-        100
+    Collage.collage
+        (round ((toFloat imageWidth) / 2))
+        (round ((toFloat imageHeight) / 2))
         (List.map drawPolygon image)
         |> Element.toHtml
 
