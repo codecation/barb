@@ -141,7 +141,8 @@ update msg model =
             ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
 
         UpdateCandidate image ->
-             update RequestImageData { model | candidate = image }
+            ( { model | candidate = image }, Cmd.none )
+
 
 
 -- VIEW
@@ -179,7 +180,8 @@ view model =
                 [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
-            [ button [ Html.Events.onClick GenerateNewCandidate ] [ text "Go!" ]
+            [ button [ Html.Events.onClick GenerateNewCandidate ] [ text "Generate New Candidate" ]
+            , button [ Html.Events.onClick RequestImageData ] [ text "Calculate Fitness" ]
             , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
             , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
             , div [] [ text <| "iterations: " ++ toString model.iterations ]
