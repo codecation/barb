@@ -87,10 +87,9 @@ sometimesRandomCircle circle =
           Random.bool `Random.andThen` \b -> if b then circle' else randomCircle
 
 
-
-randomizeOnlySomeCircles : (List Circle) -> Random.Generator (List Circle)
-randomizeOnlySomeCircles circles =
-    Random.map Circle sometimesRandomCircle
+-- randomizeOnlySomeCircles : (List Circle) -> Random.Generator (List Circle)
+-- randomizeOnlySomeCircles circles =
+--     Random.list (List.length circles) sometimesRandomCircle cir
 
 
 randomColor : Random.Generator Color.Color
@@ -161,7 +160,8 @@ update msg model =
             ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
 
         MutateCandidate ->
-            ( model, Random.generate UpdateCandidate (randomizeOnlySomeCircles model.candidate) )
+            -- ( model, Random.generate UpdateCandidate (randomizeOnlySomeCircles model.candidate))
+            ( model, Cmd.none)
 
         UpdateCandidate image ->
             ( { model | candidate = image }, Cmd.none )
