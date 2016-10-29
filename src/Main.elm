@@ -278,7 +278,7 @@ exaggeratePercentage number =
 
 graphBar : Float -> Html Msg
 graphBar percentage =
-    div [ class "graph-bar", style [ ( "height", (displayablePercentage percentage) ) ] ] []
+    div [ class "graph-bar", style [ ( "transform", "translateY(-" ++ (displayablePercentage percentage) ++ ")" ) ] ] []
 
 
 graphList : List Float -> Html Msg
@@ -287,7 +287,8 @@ graphList fitnessHistory =
         graphBars =
             List.map (\x -> graphBar x) fitnessHistory
     in
-        div [ class "graph" ] graphBars
+        div [ class "graph" ]
+            [ div [ class "graph-bar_container" ] graphBars ]
 
 
 view : Model -> Html Msg

@@ -76,20 +76,29 @@ body {
 }
 
 .graph {
-  align-items: flex-end;
-  bottom: 0;
-  display: flex;
-  height: 40%;
+  height: 100%;
+  left: 0;
+  overflow: hidden;
   position: absolute;
+  top: 0;
   transition: opacity .5s ease;
   width: 100%;
   z-index: 1;
+}
+
+.graph-bar_container {
+  align-items: flex-end;
+  display: flex;
+  height: 40%;
+  position: relative;
+  top: 100%;
 }
 
 .graph-bar {
   background: rgba(255, 255, 255, .5);
   border-radius: 1em 1em 0 0;
   flex: 1;
+  height: 100%;
   position: relative;
 
   &:nth-child(even) {
