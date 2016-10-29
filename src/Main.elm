@@ -9,6 +9,7 @@ import Html.App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Random
+import Random.Extra
 
 
 -- MODEL
@@ -81,10 +82,11 @@ randomCircle =
 
 sometimesRandomCircle : Circle -> Random.Generator Circle
 sometimesRandomCircle circle =
-    if True then
-        circle
-    else
-        randomCircle
+      let
+          circle' = Random.Extra.constant circle
+      in
+          Random.bool `Random.andThen` \b -> if b then circle' else randomCircle
+
 
 
 randomizeOnlySomeCircles : (List Circle) -> Random.Generator (List Circle)
