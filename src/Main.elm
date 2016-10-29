@@ -2,7 +2,6 @@ port module Main exposing (..)
 
 import Collage
 import Color
-import Debug
 import Element
 import Html exposing (..)
 import Html.App
@@ -162,7 +161,7 @@ update msg model =
             ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
 
         MutateCandidate ->
-            ( model, Random.generate UpdateCandidate (randomizeOnlySomeCircles model.candidate))
+            ( model, Random.generate UpdateCandidate (randomizeOnlySomeCircles model.candidate) )
 
         UpdateCandidate image ->
             ( { model | candidate = image }, Cmd.none )
@@ -190,24 +189,38 @@ styleUploadedImageSize =
         ]
 
 
+displayablePercentage : Float -> String
+displayablePercentage number =
+    let
+        rounded =
+            round (number * 10000)
+
+        toTwoDecimals =
+            (toFloat rounded) * 0.01
+    in
+        (toString toTwoDecimals) ++ "%"
+
+
 view : Model -> Html Msg
 view model =
     div [ class "images" ]
         [ div [ class "images-image_container" ]
             [ img [ src "img/manet.jpg", class "images-original_image_container-image" ] [] ]
         , div [ class "images-image_container" ]
-            [ div [ styleUploadedImageSize ]
+            [ div [ class "images-image_container-peeking_number" ]
+                [ text <| displayablePercentage model.fittestFitness ]
+            , div [ styleUploadedImageSize ]
                 [ drawCandidate model.fittest ]
             ]
         , div [ class "images-image_container" ]
-            [ div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
+            [ div [ class "images-image_container-peeking_number" ]
+                [ text <| displayablePercentage model.candidateFitness ]
+            , div [ styleUploadedImageSize, class "images-image_container-generated_image_canvas" ]
                 [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
             [ button [ Html.Events.onClick GenerateFirstCandidate ] [ text "Seed" ]
             , button [ Html.Events.onClick RequestImageData ] [ text "Iterate" ]
-            , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
-            , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
             , div [] [ text <| "iterations: " ++ toString model.iterations ]
             ]
         ]

@@ -39,6 +39,17 @@ body {
   }
 }
 
+.images-image_container-peeking_number {
+  color: #cccccc;
+  font-feature-settings: "tnum";
+  font-size: 3em;
+  font-weight: 900;
+  position: absolute;
+  text-align: center;
+  top: -.92em;
+  width: 100%;
+}
+
 .debug_area {
   font-feature-settings: "tnum";
   position: absolute;
