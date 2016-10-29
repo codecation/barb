@@ -77,17 +77,6 @@ randomColor =
     Random.map3 Color.rgb (Random.int 0 255) (Random.int 0 255) (Random.int 0 255)
 
 
-
--- UPDATE
-
-
-type Msg
-    = CalculateFitness ( List Int, List Int )
-    | RequestImageData
-    | GenerateNewCandidate
-    | UpdateCandidate Image
-
-
 checkFitness : ( List Int, List Int ) -> Float
 checkFitness ( uploadedImage, candidateImage ) =
     let
@@ -107,6 +96,17 @@ checkFitness ( uploadedImage, candidateImage ) =
             pixelCount * 256 * 256
     in
         1 - (sumOfSquares / toFloat (maximumDifference))
+
+
+
+-- UPDATE
+
+
+type Msg
+    = CalculateFitness ( List Int, List Int )
+    | RequestImageData
+    | GenerateNewCandidate
+    | UpdateCandidate Image
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -141,8 +141,7 @@ update msg model =
             ( model, Random.generate UpdateCandidate (Random.list numberOfCircles randomCircle) )
 
         UpdateCandidate image ->
-            ( { model | candidate = image }, Cmd.none )
-
+             update RequestImageData { model | candidate = image }
 
 
 -- VIEW
@@ -180,8 +179,7 @@ view model =
                 [ drawCandidate model.candidate ]
             ]
         , div [ class "debug_area" ]
-            [ button [ Html.Events.onClick GenerateNewCandidate ] [ text "Generate New Candidate" ]
-            , button [ Html.Events.onClick RequestImageData ] [ text "Calculate Fitness" ]
+            [ button [ Html.Events.onClick GenerateNewCandidate ] [ text "Go!" ]
             , div [] [ text <| "fittestFitness: " ++ toString model.fittestFitness ]
             , div [] [ text <| "candidateFitness: " ++ toString model.candidateFitness ]
             , div [] [ text <| "iterations: " ++ toString model.iterations ]
