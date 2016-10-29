@@ -193,7 +193,8 @@ styleUploadedImageSize =
 displayablePercentage : Float -> String
 displayablePercentage number =
     let
-        rounded = Exts.Float.roundTo 2 (number * 100)
+        rounded =
+            Exts.Float.roundTo 2 (number * 100)
     in
         (toString rounded) ++ "%"
 
