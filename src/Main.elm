@@ -55,7 +55,9 @@ type alias Model =
 type alias Circle =
     { center : ( Float, Float )
     , radius : Float
-    , color : Color.Color
+    , color :
+        Color.Color
+        -- TODO - combine color and alpha into rgba val
     , alpha : Float
     }
 
@@ -96,24 +98,18 @@ maybeMutateCenter ( x, y ) =
                 `Random.andThen` \f -> Random.Extra.constant ( (f + x), (f + y) )
           )
         ]
+        
 
-
-maybeMutateRGBValue : Int -> Random.Generator Int
-maybeMutateRGBValue int =
-    Random.Extra.frequency
-        [ ( 90.0, Random.Extra.constant int )
-        , ( 10.0
-          , (Random.int -255 255)
-                `Random.andThen` \i -> Random.Extra.constant (clamp 0 255 (i + int))
-          )
-        ]
+randomColor : Random.Generator Color.Color
+randomColor =
+    Random.map3 Color.rgb (Random.int 0 255) (Random.int 0 255) (Random.int 0 255)
 
 
 maybeMutateColor : Color.Color -> Random.Generator Color.Color
 maybeMutateColor color =
     Random.Extra.frequency
         [ ( 90.0, Random.Extra.constant color )
-        , ( 10.0, randomColor )
+        , ( 10.0, randomColor)
         ]
 
 
@@ -152,9 +148,9 @@ mutateCircle circle =
 sometimesMutate : Circle -> Random.Generator Circle
 sometimesMutate circle =
     Random.Extra.frequency
-        [ ( 80.0, Random.Extra.constant circle )
-        , ( 10.0, mutateCircle circle )
-        , ( 10.0, randomCircle )
+        [ ( 90.0, Random.Extra.constant circle )
+        , ( 9.0, mutateCircle circle )
+        , ( 1.0, randomCircle )
         ]
 
 
@@ -165,11 +161,6 @@ mutateImage listOfCircles =
             List.map sometimesMutate listOfCircles
     in
         Random.Extra.together listOfGenerators
-
-
-randomColor : Random.Generator Color.Color
-randomColor =
-    Random.map3 Color.rgb (Random.int 0 255) (Random.int 0 255) (Random.int 0 255)
 
 
 checkFitness : ( List Int, List Int ) -> Float
