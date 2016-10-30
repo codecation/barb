@@ -28,6 +28,7 @@ type alias Model =
     , imageDataForUploadedImage : List Int
     , imageHeight : Int
     , imageWidth : Int
+    , hasStarted : Bool
     }
 
 
@@ -73,11 +74,12 @@ init =
       , fittestFitness = 0.0
       , candidate = []
       , candidateFitness = 0.0
-      , candidateFitnessHistory = List.repeat 25 0.0
+      , candidateFitnessHistory = List.repeat 20 0.0
       , iterations = 0
       , imageDataForUploadedImage = []
       , imageHeight = 0
       , imageWidth = 0
+      , hasStarted = False
       }
     , Cmd.none
     )
@@ -192,7 +194,9 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Start ->
-            ( model, requestUploadedImage "" )
+            ( { model | hasStarted = True }
+            , requestUploadedImage ""
+            )
 
         StoreUploadedImage image ->
             ( { model
@@ -262,7 +266,7 @@ displayablePercentage number =
 
 exaggeratePercentage : Float -> Float
 exaggeratePercentage number =
-    (((number * 100) - 95) * 20) / 100
+    (((number * 100) - 90) * 10) / 100
 
 
 graphBar : Float -> Html Msg
@@ -276,33 +280,46 @@ graphList fitnessHistory =
         graphBars =
             List.map (\x -> graphBar x) fitnessHistory
     in
-        div [ class "graph" ]
-            [ div [ class "graph-bar_container" ] graphBars ]
+        div [ class "graph" ] graphBars
+
+
+renderStartAndInfo : Model -> Html Msg
+renderStartAndInfo model =
+    if model.hasStarted then
+        div
+            [ class "images-image_container-info_tray" ]
+            [ div
+                [ class "images-image_container-info_tray-number" ]
+                [ text <| toString model.iterations ]
+            , div
+                [ class "images-image_container-info_tray-number" ]
+                [ text <| displayablePercentage model.fittestFitness ]
+            , graphList model.candidateFitnessHistory
+            ]
+    else
+        div
+            [ Html.Events.onClick Start
+            , class "images-image_container-info_tray images-image_container-info_tray--button"
+            ]
+            [ text "Start" ]
 
 
 view : Model -> Html Msg
 view model =
     div [ class "images" ]
+    [ div
+        [ class "images-image_container" ]
+        [ img [ src "img/quarters.jpg", class "images-original_image_container-image" ] [] ]
+    , div
+        [ class "images-image_container" ]
         [ div
-            [ class "images-image_container images-image_container--hoverable"
-            , Html.Events.onClick Start
+            [ applyUploadedImageSize model
+            , class "images-image_container-generated_image_canvas class images-image_container-force_size_fill"
             ]
-            [ img [ src "img/quarters.jpg", class "images-original_image_container-image" ] [] ]
-        , div
-            [ class "images-image_container images-image_container--hoverable" ]
-            [ div
-                [ class "images-image_container-peeking_number" ]
-                [ text <| displayablePercentage model.fittestFitness ]
-            , div
-                [ applyUploadedImageSize model
-                , class "images-image_container-generated_image_canvas class images-image_container-force_size_fill"
-                ]
-                [ drawCandidate model ]
-            , div
-                [ class "images-image_container-overlay_text" ]
-                [ text <| toString model.iterations ]
-            ]
+            [ drawCandidate model ]
+        , renderStartAndInfo model
         ]
+    ]
 
 
 drawCandidate : Model -> Html Msg
