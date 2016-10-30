@@ -1,6 +1,11 @@
 
 # barb
 
+## Inspiration
+
+- [http://chriscummins.cc/s/genetics](http://chriscummins.cc/s/genetics)
+- [http://alteredqualia.com/visualization/evolve](http://alteredqualia.com/visualization/evolve)
+
 ## Development
 
 Start the hot-reloading webpack dev server:
