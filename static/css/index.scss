@@ -2,6 +2,7 @@ body {
   background: #f1f1f1;
   font-family: 'BlinkMacSystemFont', -apple-system, sans-serif;
   margin: 0;
+  overflow: hidden;
 }
 
 .images {
@@ -9,14 +10,14 @@ body {
   display: flex;
   height: 100vh;
   justify-content: center;
-  overflow: hidden;
+  transform: scale(2.5);
   width: 100vw;
 }
 
 .images-image_container {
   background: #fff;
-  box-shadow: 0 20px 40px rgba(0, 0 ,0, .3);
-  margin: 0 4vw;
+  box-shadow: 0 20px 40px rgba(0, 0 ,0, .2);
+  margin: 0 2vw;
   position: relative;
   user-select: none;
 
@@ -28,8 +29,8 @@ body {
   transition: transform .5s ease, box-shadow .5s ease;
 
   &:hover {
-    transform: scale(1.5);
-    box-shadow: 0 25px 45px rgba(0, 0 ,0, .2);
+    transform: scale(1.25);
+    box-shadow: 0 25px 45px rgba(0, 0 ,0, .15);
 
     .images-image_container-peeking_number {
       transform: translateY(-.92em) scale(1);
@@ -50,7 +51,7 @@ body {
 .images-image_container-peeking_number {
   color: #cccccc;
   font-feature-settings: "tnum";
-  font-size: 1.5em;
+  font-size: 1em;
   font-weight: 900;
   position: absolute;
   text-align: center;
@@ -62,14 +63,13 @@ body {
 }
 
 .images-image_container-overlay_text {
+  bottom: .5em;
   color: rgba(white, .4);
   font-feature-settings: "tnum";
-  font-size: 1.5em;
+  font-size: 1em;
   font-weight: 900;
   position: absolute;
   text-align: center;
-  top: 50%;
-  transform: translateY(-50%);
   transition: opacity .5s ease;
   width: 100%;
   z-index: 1;

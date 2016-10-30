@@ -287,7 +287,7 @@ view model =
             [ class "images-image_container images-image_container--hoverable"
             , Html.Events.onClick Start
             ]
-            [ img [ src "img/bluered.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/quarters.jpg", class "images-original_image_container-image" ] [] ]
         , div
             [ class "images-image_container images-image_container--hoverable" ]
             [ div
