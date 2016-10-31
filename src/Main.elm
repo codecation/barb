@@ -64,12 +64,12 @@ maximumVertexDisplacement =
 
 maximumRGBChange : Int
 maximumRGBChange =
-    55
+    45
 
 
 maximumAlphaChange : Float
 maximumAlphaChange =
-    0.4
+    0.3
 
 init : ( Model, Cmd Msg )
 init =
@@ -355,7 +355,7 @@ view model =
     div [ class "images" ]
         [ div
             [ class "images-image_container" ]
-            [ img [ src "img/mona.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/bluered.jpg", class "images-original_image_container-image" ] [] ]
         , div
             [ class "images-image_container" ]
             [ div
