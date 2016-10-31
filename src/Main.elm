@@ -65,12 +65,12 @@ maximumVertexDisplacement =
 
 maximumRGBChange : Int
 maximumRGBChange =
-    10
+    50
 
 
 maximumAlphaChange : Float
 maximumAlphaChange =
-    10.0
+    0.3
 
 init : ( Model, Cmd Msg )
 init =
@@ -110,6 +110,15 @@ randomPolygon =
             Random.Color.rgba
 
 
+adjustColor : Color -> Int -> Int -> Int -> Float -> Color
+adjustColor color dr dg db da =
+    Color.rgba
+        ((Color.toRgb color).red + dr)
+        ((Color.toRgb color).green + dg)
+        ((Color.toRgb color).blue + db)
+        ((Color.toRgb color).alpha + da)
+
+
 maybeMutateColor : Color -> Generator Color
 maybeMutateColor color =
     let
@@ -120,16 +129,12 @@ maybeMutateColor color =
             Random.int -maximumRGBChange maximumRGBChange
 
         colorGenerator =
-            intGenerator `Random.andThen` \dr ->
-                intGenerator `Random.andThen` \dg ->
-                    intGenerator `Random.andThen` \db ->
-                        floatGenerator `Random.andThen` \da ->
-                            Random.Extra.constant 
-                                (Color.rgba
-                                    (color.r + dr)
-                                    (color.g + dg)
-                                    (color.b + db)
-                                    (color.a + da))
+            Random.map4
+                (adjustColor color)
+                intGenerator
+                intGenerator
+                intGenerator
+                floatGenerator
     in
         Random.Extra.frequency
             [ ( 50.0, Random.Extra.constant color )
