@@ -53,9 +53,14 @@ minimumAlpha =
     0.2
 
 
+maximumInitialEdgeLength : Float
+maximumInitialEdgeLength =
+    10
+
+
 maximumVertexDisplacement : Float
 maximumVertexDisplacement =
-    50
+    10
 
 
 minimumRGBValue : Int
@@ -87,16 +92,23 @@ init =
 
 randomPolygon : Generator Polygon
 randomPolygon =
-    Random.map2
-        Polygon
-        (Random.list
-            3
-            (Random.pair
-                (Random.float -maximumVertexDisplacement maximumVertexDisplacement)
-                (Random.float -maximumVertexDisplacement maximumVertexDisplacement)
+    let
+        min =
+            -maximumInitialEdgeLength
+
+        max =
+            maximumInitialEdgeLength
+    in
+        Random.map2
+            Polygon
+            (Random.list
+                3
+                (Random.pair
+                    (Random.float min max)
+                    (Random.float min max)
+                )
             )
-        )
-        Random.Color.rgba
+            Random.Color.rgba
 
 
 maybeMutateColor : Color -> Generator Color
@@ -107,8 +119,41 @@ maybeMutateColor color =
         ]
 
 
+sometimesMutateVertex : ( Float, Float ) -> Generator ( Float, Float )
+sometimesMutateVertex ( x, y ) =
+    -- TODO: would be nice to also just pick x or y.
+    let
+        min =
+            -maximumVertexDisplacement
+
+        max =
+            maximumVertexDisplacement
+
+        vertexGenerator =
+            (Random.float min max)
+                `Random.andThen`
+                    \dx ->
+                        (Random.float min max)
+                            `Random.andThen` \dy -> (Random.Extra.constant ( x + dx, y + dy ))
+    in
+        Random.Extra.frequency
+            [ ( 50.0, Random.Extra.constant ( x, y ) )
+            , ( 50.0, vertexGenerator )
+            ]
+
+
+maybeMutateVertices : List ( Float, Float ) -> Generator (List ( Float, Float ))
+maybeMutateVertices vertices =
+    let
+        listOfGenerators =
+            List.map sometimesMutateVertex vertices
+    in
+        Random.Extra.together listOfGenerators
+
+
 mutatePolygon : Polygon -> Generator Polygon
 mutatePolygon polygon =
+    -- TODO: How can we mutate one or the other?
     Random.map2
         Polygon
         (maybeMutateVertices polygon.vertices)
@@ -121,23 +166,6 @@ sometimesMutate polygon =
         [ ( 90.0, Random.Extra.constant polygon )
         , ( 9.0, mutatePolygon polygon )
         , ( 1.0, randomPolygon )
-        ]
-
-
-maybeMutateVertices : List ( Float, Float ) -> Generator (List ( Float, Float ))
-maybeMutateVertices vertices =
-    let
-        listOfGenerators =
-            List.map sometimesMutateVertex vertices
-    in
-        Random.Extra.together listOfGenerators
-
-
-sometimesMutateVertex : ( Float, Float ) -> Generator ( Float, Float )
-sometimesMutateVertex ( x, y ) =
-    Random.Extra.frequency
-        [ ( 50.0, Random.Extra.constant ( x, y ) )
-        , ( 50.0, (Random.float -30.0 30.0) `Random.andThen` \i -> Random.Extra.constant ( (i + x), (i + y) ) )
         ]
 
 
@@ -307,19 +335,19 @@ renderStartAndInfo model =
 view : Model -> Html Msg
 view model =
     div [ class "images" ]
-    [ div
-        [ class "images-image_container" ]
-        [ img [ src "img/quarters.jpg", class "images-original_image_container-image" ] [] ]
-    , div
-        [ class "images-image_container" ]
         [ div
-            [ applyUploadedImageSize model
-            , class "images-image_container-generated_image_canvas class images-image_container-force_size_fill"
+            [ class "images-image_container" ]
+            [ img [ src "img/mona.jpg", class "images-original_image_container-image" ] [] ]
+        , div
+            [ class "images-image_container" ]
+            [ div
+                [ applyUploadedImageSize model
+                , class "images-image_container-generated_image_canvas class images-image_container-force_size_fill"
+                ]
+                [ drawCandidate model ]
+            , renderStartAndInfo model
             ]
-            [ drawCandidate model ]
-        , renderStartAndInfo model
         ]
-    ]
 
 
 drawCandidate : Model -> Html Msg
