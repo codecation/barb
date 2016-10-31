@@ -42,16 +42,6 @@ numberOfPolygons =
     125
 
 
-maximumAlpha : Float
-maximumAlpha =
-    1.0
-
-
-minimumAlpha : Float
-minimumAlpha =
-    0.1
-
-
 maximumInitialEdgeLength : Float
 maximumInitialEdgeLength =
     15
@@ -64,12 +54,12 @@ maximumVertexDisplacement =
 
 maximumRGBChange : Int
 maximumRGBChange =
-    45
+    25
 
 
 maximumAlphaChange : Float
 maximumAlphaChange =
-    0.3
+    0.1
 
 init : ( Model, Cmd Msg )
 init =
@@ -110,11 +100,15 @@ randomPolygon =
 
 adjustColor : Color -> Int -> Int -> Int -> Float -> Color
 adjustColor color dr dg db da =
-    Color.rgba
-        ((Color.toRgb color).red + dr)
-        ((Color.toRgb color).green + dg)
-        ((Color.toRgb color).blue + db)
-        ((Color.toRgb color).alpha + da)
+    let
+        rgba =
+            Color.toRgb color
+    in
+        Color.rgba
+            (clamp 0 255 (rgba.red + dr))
+            (clamp 0 255 (rgba.green + dg))
+            (clamp 0 255 (rgba.blue + db))
+            (clamp 0.0 1.0 (rgba.alpha + da))
 
 
 maybeMutateColor : Color -> Generator Color
@@ -359,7 +353,7 @@ view model =
     div [ class "images" ]
         [ div
             [ class "images-image_container" ]
-            [ img [ src "img/barry.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/jack.jpg", class "images-original_image_container-image" ] [] ]
         , div
             [ class "images-image_container" ]
             [ div
