@@ -39,37 +39,37 @@ type alias Polygon =
 
 numberOfPolygons : Int
 numberOfPolygons =
-    50
+    125
 
 
 maximumAlpha : Float
 maximumAlpha =
-    0.9
+    1.0
 
 
 minimumAlpha : Float
 minimumAlpha =
-    0.2
+    0.1
 
 
 maximumInitialEdgeLength : Float
 maximumInitialEdgeLength =
-    10
+    15
 
 
 maximumVertexDisplacement : Float
 maximumVertexDisplacement =
-    10
+    15
 
 
 maximumRGBChange : Int
 maximumRGBChange =
-    50
+    55
 
 
 maximumAlphaChange : Float
 maximumAlphaChange =
-    0.3
+    0.4
 
 init : ( Model, Cmd Msg )
 init =
