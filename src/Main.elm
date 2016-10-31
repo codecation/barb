@@ -359,7 +359,7 @@ view model =
     div [ class "images" ]
         [ div
             [ class "images-image_container" ]
-            [ img [ src "img/mona.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/barry.jpg", class "images-original_image_container-image" ] [] ]
         , div
             [ class "images-image_container" ]
             [ div
