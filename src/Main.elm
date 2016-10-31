@@ -23,7 +23,6 @@ type alias Model =
     , fittestFitness : Float
     , candidate : List Polygon
     , candidateFitness : Float
-    , candidateFitnessHistory : List Float
     , iterations : Int
     , imageDataForUploadedImage : List Int
     , imageHeight : Int
@@ -78,7 +77,6 @@ init =
       , fittestFitness = 0.0
       , candidate = []
       , candidateFitness = 0.0
-      , candidateFitnessHistory = List.repeat 20 0.0
       , iterations = 0
       , imageDataForUploadedImage = []
       , imageHeight = 0
@@ -284,8 +282,6 @@ update msg model =
                     update MutateCandidate
                         { model
                             | candidateFitness = newCandidateFitness
-                            , candidateFitnessHistory =
-                                shiftList model.candidateFitnessHistory (exaggeratePercentage newCandidateFitness)
                             , candidate = model.fittest
                             , iterations = model.iterations + 1
                         }
@@ -345,7 +341,6 @@ renderStartAndInfo model =
             , div
                 [ class "images-image_container-info_tray-number" ]
                 [ text <| displayablePercentage model.fittestFitness ]
-            , graphList model.candidateFitnessHistory
             ]
     else
         div
