@@ -71,7 +71,6 @@ maximumAlphaChange : Float
 maximumAlphaChange =
     0.3
 
-
 init : ( Model, Cmd Msg )
 init =
     ( { fittest = []
@@ -175,11 +174,16 @@ maybeMutateVertices vertices =
 
 mutatePolygon : Polygon -> Generator Polygon
 mutatePolygon polygon =
-    -- TODO: How can we mutate one or the other?
-    Random.map2
-        Polygon
-        (maybeMutateVertices polygon.vertices)
-        (maybeMutateColor polygon.color)
+    Random.Extra.frequency
+    [ ( 50.0, Random.map2
+                  Polygon
+                  (maybeMutateVertices polygon.vertices)
+                  (Random.Extra.constant polygon.color) )
+    , ( 50.0, Random.map2
+                  Polygon
+                  (Random.Extra.constant polygon.vertices)
+                  (maybeMutateColor polygon.color) )
+    ]
 
 
 sometimesMutate : Polygon -> Generator Polygon
@@ -355,7 +359,7 @@ view model =
     div [ class "images" ]
         [ div
             [ class "images-image_container" ]
-            [ img [ src "img/bluered.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/mona.jpg", class "images-original_image_container-image" ] [] ]
         , div
             [ class "images-image_container" ]
             [ div
