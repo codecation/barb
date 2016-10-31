@@ -71,6 +71,7 @@ maximumAlphaChange : Float
 maximumAlphaChange =
     0.3
 
+
 init : ( Model, Cmd Msg )
 init =
     ( { fittest = []
@@ -184,9 +185,8 @@ mutatePolygon polygon =
 sometimesMutate : Polygon -> Generator Polygon
 sometimesMutate polygon =
     Random.Extra.frequency
-        [ ( 90.0, Random.Extra.constant polygon )
-        , ( 9.0, mutatePolygon polygon )
-        , ( 1.0, randomPolygon )
+        [ ( 92.0, Random.Extra.constant polygon )
+        , ( 8.0, mutatePolygon polygon )
         ]
 
 
