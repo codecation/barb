@@ -1,6 +1,8 @@
 
 # barb
 
+Warning: this is our first substantial Elm program. You might not want to use it as a guide for how to do things.
+
 ## Inspiration
 
 - [http://chriscummins.cc/s/genetics](http://chriscummins.cc/s/genetics)
