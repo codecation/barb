@@ -1,5 +1,6 @@
 port module Main exposing (..)
 
+import AnimationFrame
 import Collage
 import Color exposing (Color)
 import Element
@@ -60,6 +61,7 @@ maximumRGBChange =
 maximumAlphaChange : Float
 maximumAlphaChange =
     0.1
+
 
 init : ( Model, Cmd Msg )
 init =
@@ -169,15 +171,19 @@ maybeMutateVertices vertices =
 mutatePolygon : Polygon -> Generator Polygon
 mutatePolygon polygon =
     Random.Extra.frequency
-    [ ( 50.0, Random.map2
-                  Polygon
-                  (maybeMutateVertices polygon.vertices)
-                  (Random.Extra.constant polygon.color) )
-    , ( 50.0, Random.map2
-                  Polygon
-                  (Random.Extra.constant polygon.vertices)
-                  (maybeMutateColor polygon.color) )
-    ]
+        [ ( 50.0
+          , Random.map2
+                Polygon
+                (maybeMutateVertices polygon.vertices)
+                (Random.Extra.constant polygon.color)
+          )
+        , ( 50.0
+          , Random.map2
+                Polygon
+                (Random.Extra.constant polygon.vertices)
+                (maybeMutateColor polygon.color)
+          )
+        ]
 
 
 sometimesMutate : Polygon -> Generator Polygon
@@ -203,14 +209,11 @@ checkFitness ( uploadedImage, candidateImage ) =
         pixelCount =
             List.length uploadedImage
 
-        differences =
-            List.map2 (-) uploadedImage candidateImage
-
-        squares =
-            List.map (\x -> x ^ 2) differences
+        squaredDifferences =
+            List.map2 (\x y -> (x - y) ^ 2) uploadedImage candidateImage
 
         sumOfSquares =
-            List.foldr (+) 0 squares
+            List.sum squaredDifferences |> toFloat
 
         maximumDifference =
             pixelCount * 256 * 256
@@ -235,6 +238,7 @@ type Msg
     | StoreUploadedImage (List Int)
     | UpdateCandidate (List Polygon)
     | Sleep
+    | Tick Float
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -255,7 +259,7 @@ update msg model =
             )
 
         UpdateCandidate image ->
-            update Sleep { model | candidate = image }
+            ( { model | candidate = image }, requestCandidateImage "" )
 
         Sleep ->
             ( model, Task.perform (always RequestCandidateImage) (always RequestCandidateImage) (Process.sleep 0) )
@@ -286,6 +290,9 @@ update msg model =
 
         MutateCandidate ->
             ( model, Random.generate UpdateCandidate (mutatePolygons model.candidate) )
+
+        Tick time ->
+            ( model, Cmd.none )
 
 
 
@@ -353,7 +360,7 @@ view model =
     div [ class "images" ]
         [ div
             [ class "images-image_container" ]
-            [ img [ src "img/jack.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/quarters.jpg", class "images-original_image_container-image" ] [] ]
         , div
             [ class "images-image_container" ]
             [ div
@@ -390,6 +397,7 @@ subscriptions model =
     Sub.batch
         [ uploadedImage StoreUploadedImage
         , candidateImage CalculateFitness
+        , AnimationFrame.times Tick
         ]
 
 
