@@ -61,6 +61,7 @@ maximumAlphaChange : Float
 maximumAlphaChange =
     0.1
 
+
 init : ( Model, Cmd Msg )
 init =
     ( { fittest = []
@@ -145,11 +146,10 @@ sometimesMutateVertex ( x, y ) =
             maximumVertexDisplacement
 
         vertexGenerator =
-            (Random.float min max)
-                `Random.andThen`
-                    \dx ->
-                        (Random.float min max)
-                            `Random.andThen` \dy -> (Random.Extra.constant ( x + dx, y + dy ))
+            Random.map2
+                (\dx dy -> ( x + dx, y + dy ))
+                (Random.float min max)
+                (Random.float min max)
     in
         Random.Extra.frequency
             [ ( 50.0, Random.Extra.constant ( x, y ) )
@@ -169,15 +169,19 @@ maybeMutateVertices vertices =
 mutatePolygon : Polygon -> Generator Polygon
 mutatePolygon polygon =
     Random.Extra.frequency
-    [ ( 50.0, Random.map2
-                  Polygon
-                  (maybeMutateVertices polygon.vertices)
-                  (Random.Extra.constant polygon.color) )
-    , ( 50.0, Random.map2
-                  Polygon
-                  (Random.Extra.constant polygon.vertices)
-                  (maybeMutateColor polygon.color) )
-    ]
+        [ ( 50.0
+          , Random.map2
+                Polygon
+                (maybeMutateVertices polygon.vertices)
+                (Random.Extra.constant polygon.color)
+          )
+        , ( 50.0
+          , Random.map2
+                Polygon
+                (Random.Extra.constant polygon.vertices)
+                (maybeMutateColor polygon.color)
+          )
+        ]
 
 
 sometimesMutate : Polygon -> Generator Polygon
@@ -230,7 +234,6 @@ shiftList existingList newListItem =
 type Msg
     = CalculateFitness (List Int)
     | Start
-    | MutateCandidate
     | RequestCandidateImage
     | StoreUploadedImage (List Int)
     | UpdateCandidate (List Polygon)
@@ -269,23 +272,22 @@ update msg model =
                     checkFitness ( model.imageDataForUploadedImage, candidateImage )
             in
                 if newCandidateFitness > model.fittestFitness then
-                    update MutateCandidate
-                        { model
-                            | fittest = model.candidate
-                            , fittestFitness = newCandidateFitness
-                            , iterations = model.iterations + 1
-                            , candidateFitness = newCandidateFitness
-                        }
+                    ( { model
+                        | fittest = model.candidate
+                        , fittestFitness = newCandidateFitness
+                        , iterations = model.iterations + 1
+                        , candidateFitness = newCandidateFitness
+                      }
+                    , Random.generate UpdateCandidate (mutatePolygons model.candidate)
+                    )
                 else
-                    update MutateCandidate
-                        { model
-                            | candidateFitness = newCandidateFitness
-                            , candidate = model.fittest
-                            , iterations = model.iterations + 1
-                        }
-
-        MutateCandidate ->
-            ( model, Random.generate UpdateCandidate (mutatePolygons model.candidate) )
+                    ( { model
+                        | candidateFitness = newCandidateFitness
+                        , candidate = model.fittest
+                        , iterations = model.iterations + 1
+                      }
+                    , Random.generate UpdateCandidate (mutatePolygons model.fittest)
+                    )
 
 
 
@@ -353,7 +355,7 @@ view model =
     div [ class "images" ]
         [ div
             [ class "images-image_container" ]
-            [ img [ src "img/jack.jpg", class "images-original_image_container-image" ] [] ]
+            [ img [ src "img/quarters.jpg", class "images-original_image_container-image" ] [] ]
         , div
             [ class "images-image_container" ]
             [ div
@@ -395,6 +397,7 @@ subscriptions model =
 
 main : Program Never
 main =
+    -- Use flags to pass in initial image data
     Html.App.program
         { init = init
         , update = update
