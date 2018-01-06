@@ -4,7 +4,6 @@ import Collage
 import Color exposing (Color)
 import Element
 import Html exposing (..)
-import Html.App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Random exposing (Generator)
@@ -163,7 +162,7 @@ maybeMutateVertices vertices =
         listOfGenerators =
             List.map sometimesMutateVertex vertices
     in
-        Random.Extra.together listOfGenerators
+        Random.Extra.combine listOfGenerators
 
 
 mutatePolygon : Polygon -> Generator Polygon
@@ -198,7 +197,7 @@ mutatePolygons polygons =
         listOfGenerators =
             List.map sometimesMutate polygons
     in
-        Random.Extra.together listOfGenerators
+        Random.Extra.combine listOfGenerators
 
 
 checkFitness : ( List Int, List Int ) -> Float
@@ -219,7 +218,7 @@ checkFitness ( uploadedImage, candidateImage ) =
         maximumDifference =
             pixelCount * 256 * 256
     in
-        1 - (sumOfSquares / toFloat (maximumDifference))
+        1 - (toFloat sumOfSquares / toFloat (maximumDifference))
 
 
 shiftList : List Float -> Float -> List Float
@@ -261,7 +260,7 @@ update msg model =
             update Sleep { model | candidate = image }
 
         Sleep ->
-            ( model, Task.perform (always RequestCandidateImage) (always RequestCandidateImage) (Process.sleep 0) )
+            ( model, Task.perform (always RequestCandidateImage) (Process.sleep 0) )
 
         RequestCandidateImage ->
             ( model, requestCandidateImage "" )
@@ -395,10 +394,9 @@ subscriptions model =
         ]
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
-    -- Use flags to pass in initial image data
-    Html.App.program
+    Html.program
         { init = init
         , update = update
         , view = view
