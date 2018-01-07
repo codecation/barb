@@ -221,7 +221,7 @@ checkFitness ( uploadedImage, candidateImage ) =
         1 - (toFloat sumOfSquares / toFloat (maximumDifference))
 
 
-shiftList : List Float -> Float -> List Float
+shiftList : List a -> a -> List a
 shiftList existingList newListItem =
     List.append (List.drop 1 existingList) [ newListItem ]
 
@@ -313,20 +313,6 @@ displayablePercentage number =
 exaggeratePercentage : Float -> Float
 exaggeratePercentage number =
     (((number * 100) - 90) * 10) / 100
-
-
-graphBar : Float -> Html Msg
-graphBar percentage =
-    div [ class "graph-bar", style [ ( "transform", "translateY(-" ++ (displayablePercentage percentage) ++ ")" ) ] ] []
-
-
-graphList : List Float -> Html Msg
-graphList fitnessHistory =
-    let
-        graphBars =
-            List.map (\x -> graphBar x) fitnessHistory
-    in
-        div [ class "graph" ] graphBars
 
 
 renderStartAndInfo : Model -> Html Msg
